@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+ Copyright:     Inverse inc., 2007
+ Author:        Wolfgang Sourdeau <wsourdeau@inverse.ca>
+ Email:         support@inverse.ca
+ URL:           http://inverse.ca
+  -->
+
+<?xml-stylesheet type="text/css" href="chrome://global/skin/global.css"?>
+<?xml-stylesheet type="text/css" href="chrome://sogo-integrator/skin/properties-overlay.css"?>
+<?xml-stylesheet type="text/css" href="chrome://sogo-integrator/content/calendar/properties-overlay.css"?>
+
+<overlay id="inverseCalendarPropertiesOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <dialog id="calendar-properties-dialog-2"
+    ondialogaccept="return onOverlayAccept();">
+    <stringbundle id="propertiesMessages"
+      src="chrome://sogo-integrator/locale/calendar/properties-overlay.properties"/>
+    <script type="application/x-javascript"
+      src="chrome://sogo-integrator/content/calendar/properties-overlay.js"/>
+  </dialog>
+</overlay>

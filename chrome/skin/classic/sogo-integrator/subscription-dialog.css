@@ -1,0 +1,29 @@
+#inverseSubscriptionDialog
+{ width: 400px;
+  height: 200px; }
+
+#throbber-box
+{ background-color: #f00 !important;
+  padding: 0px !important;
+  border: 0px !important;
+margin: 0px !important; }
+
+#searchInput[searching="notfound"]
+{ color: #f00; }
+
+tree
+{ background-color: -moz-dialog !important; }
+
+tree[searching="done"]
+{ background-color: -moz-field !important; }
+
+treechildren::-moz-tree-cell-text
+{ margin-left: 2px; }
+
+treechildren::-moz-tree-cell-text(userNode),
+treechildren::-moz-tree-cell-text(folderNode, subscribed)
+{ color: #555 !important; }
+
+treechildren::-moz-tree-cell-text(userNode, selected),
+treechildren::-moz-tree-cell-text(folderNode, subscribed, selected)
+{ color: #fff !important; }

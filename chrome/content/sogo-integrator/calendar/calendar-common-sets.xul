@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay
+  SYSTEM "chrome://sogo-integrator/locale/calendar/calendar-common-sets.dtd">
+
+<?xml-stylesheet type="text/css" href="chrome://global/skin/global.css"?>
+
+<overlay id="inverseSICommonSetsOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript"
+    src="chrome://sogo-integrator/content/calendar/calendar-common-sets.js"/>
+
+  <commandset id="calendar_commands">
+    <command id="calendar_delete_calendar_command"
+      oncommand="deleteCalendar()"/>
+  </commandset>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="bundle_integrator_calendar"
+		  src="chrome://sogo-integrator/locale/calendar/calendar-overlay.properties"/>
+  </stringbundleset>
+
+</overlay>
