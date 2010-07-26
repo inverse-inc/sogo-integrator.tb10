@@ -36,12 +36,6 @@ function onLoadOverlay() {
 			}
 		}
 	}
-
-
-	var menuPopup = document.getElementById("email-identity-menulist");
-	if (menuPopup) {
-		dump("menupopup.value: " + menuPopup.value + "\n");
-	}
 }
 
 function onOverlayAccept() {
