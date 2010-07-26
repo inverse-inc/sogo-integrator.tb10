@@ -62,19 +62,18 @@ function openDeletePublicDirectoryForbiddenDialog() {
 	alert(strings.getString("deletePublicABError"));
 }
 
-function onDeleteAbDirectory() {
-	let dir = GetSelectedDirectory();
-	if (isGroupdavDirectory(dir)) {
-		let ab = SCGetDirectoryFromURI(dir);
-		let prefs = new GroupdavPreferenceService(ab.dirPrefId);
+function SIAbDeleteDirectory(aURI) {
+	let selectedDirectory = SCGetDirectoryFromURI(aURI);
+	if (isGroupdavDirectory(aURI)) {
+		let prefs = new GroupdavPreferenceService(selectedDirectory.dirPrefId);
 		let url = prefs.getURL();
 		let urlParts = url.split("/");
 		if (url.indexOf(sogoBaseURL()) == 0
 				&& urlParts[urlParts.length - 2] == "personal")
 			openDeletePersonalDirectoryForbiddenDialog();
 		else {
-			if (SCAbConfirmDeleteDirectory(dir)) {
-				let selectedDirectory = SCGetDirectoryFromURI(dir);
+			if (SCAbConfirmDeleteDirectory(aURI)) {
+				let selectedDirectory = SCGetDirectoryFromURI(aURI);
 				let groupdavPrefService
 					= new GroupdavPreferenceService(selectedDirectory.dirPrefId);
 				let url = groupdavPrefService.getURL();
@@ -92,21 +91,20 @@ function onDeleteAbDirectory() {
 						unsubscribeFromFolder(url, handler);
 				}
 				else
-					SCDeleteDAVDirectory(dir);
+					SCDeleteDAVDirectory(aURI);
 			}
 		}
 	}
-	else if (isCardDavDirectory(dir)) {
-		let selectedDirectory = SCGetDirectoryFromURI(dir);
-		let cardDavPrefix = "carddav://";
-		let url = selectedDirectory.URI.substr(cardDavPrefix.length);
+	else if (isCardDavDirectory(aURI)) {
+		let selectedDirectory = SCGetDirectoryFromURI(aURI);
+		let url = selectedDirectory.wrappedJSObject.serverURL;
 		if (url.indexOf(sogoBaseURL()) == 0)
 			openDeletePublicDirectoryForbiddenDialog();
 		else
-			SCAbDeleteDirectory();
+			SCAbDeleteDirectory(aURI);
 	}
 	else
-		SCAbDeleteDirectory();
+		SCAbDeleteDirectory(aURI);
 }
 
 function SIDirPaneController() {
@@ -147,8 +145,7 @@ SIDirPaneController.prototype = {
 					cd = false;
 				}
 				else if (isCardDavDirectory(uri)) {
-					let cardDavPrefix = "carddav://";
-					url = ab.URI.substr(cardDavPrefix.length);
+					url = ab.wrappedJSObject.serverURL;
 					cd = true;
 				}
 				else
@@ -232,7 +229,7 @@ function SIOnLoadHandler() {
 	this.SIGoUpdateSelectEditMenuItemsOld = this.goUpdateSelectEditMenuItems;
 	this.goUpdateSelectEditMenuItems = this.SIGoUpdateSelectEditMenuItems;
 
-	this.AbDeleteDirectory = this.onDeleteAbDirectory;
+	this.AbDeleteDirectory = this.SIAbDeleteDirectory;
 
 	SISetupAbCommandUpdateHandlers();
 

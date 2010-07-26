@@ -33,24 +33,21 @@ AddressbookHandler.prototype = {
         let children = abManager.directories;
         while (children.hasMoreElements()) {
             let ab = children.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
-            let rdfAB = ab.QueryInterface(Components.interfaces.nsIRDFResource);
-            let rdfValue = rdfAB.Value;
+            let abURI = ab.URI;
             let abURL = null;
-            // dump("  rdfAB.Value: " + rdfValue + "\n");
-            // dump("  ab.URI: " + ab.URI + "\n");
-            if (isGroupdavDirectory(rdfValue)) {
+            // dump("  rdfAB.Value: " + abURI + "\n");
+            if (isGroupdavDirectory(abURI)) {
                 let service = new GroupdavPreferenceService(ab.dirPrefId);
                 abURL = service.getURL();
                 // dump("  GroupDAV existing: " + ab.dirPrefId + " - " + abURL + "\n");
             }
-            else if (isCardDavDirectory(rdfValue)) {
-                let carddavPrefix = "carddav://";
-                abURL = ab.URI.substr(carddavPrefix.length);
+            else if (isCardDavDirectory(abURI)) {
+                abURL = ab.wrappedJSObject.serverURL;
                 // dump("  CardDAV existing: " + ab.dirPrefId + " - " + abURL + "\n");
             }
             if (abURL) {
                 if (existing[abURL])
-                    this.doubles[rdfValue] = ab;
+                    this.doubles[abURI] = ab;
                 else
                     existing[abURL] = ab;
             }
@@ -63,9 +60,9 @@ AddressbookHandler.prototype = {
         let newDoubles = [];
         /* we need to use as hash here to ensure each abDirectory is only present
          once. */
-        for (let rdfValue in this.doubles) {
-            dump("   double rdfValue: "  + rdfValue + "\n");
-            newDoubles.push(this.doubles[rdfValue]);
+        for (let abURI in this.doubles) {
+            dump("   double uri: "  + abURI + "\n");
+            newDoubles.push(this.doubles[abURI]);
         }
 
         dump("doubles:  " + newDoubles.length + "\n");
@@ -100,8 +97,8 @@ AddressbookHandler.prototype = {
     removeDirectories: function(oldDirs) {
         dump("removeDirectories: backtrace: " +  backtrace() + "\n\n\n");
         for (let i = 0; i < oldDirs.length; i++) {
-            let rdfValue = oldDirs[i].QueryInterface(Components.interfaces.nsIRDFResource).Value;
-            SCDeleteDAVDirectory(rdfValue);
+            let abURI = oldDirs[i].URI;
+            SCDeleteDAVDirectory(abURI);
         }
     },
     urlForParentDirectory: function() {
@@ -166,7 +163,7 @@ AddressbookHandler.prototype = {
         return isHistory;
     },
     _ensureHistoryIsPersonal: function(prefService) {
-        let personalURL = sogoBaseURL() + "Contacts/personal/"
+        let personalURL = sogoBaseURL() + "Contacts/personal/";
         let existing = this.getExistingDirectories();
         let personalAB = existing[personalURL];
         prefService.setCharPref("mail.collect_addressbook", personalAB.URI);

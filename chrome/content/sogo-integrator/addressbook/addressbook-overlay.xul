@@ -37,7 +37,7 @@
     <command id="addressbook_subscribe_addressbook_command"
       oncommand="openAbSubscriptionDialog()"/>
     <command id="addressbook_delete_addressbook_command"
-      oncommand="onDeleteAbDirectory()"/>
+      oncommand="SIAbDeleteDirectory(gSelectedDir)"/>
   </commandset>
 
   <stringbundleset id="stringbundleset">

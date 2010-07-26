@@ -1,3 +1,10 @@
+2010-07-26  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/sogo-integrator/addressbook/addressbook-overlay.js:
+	(SIAbDeleteDirectory): renamed from "onDeleteAbDirectory". Now
+	takes an URI argument, to match AbDeleteDirectory. The ab's http
+	url is now requested directly via the "serverURL" method.
+
 2010-06-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* Initial TB3.1 code
