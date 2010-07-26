@@ -160,7 +160,6 @@ function SICommonDialogOnLoad() {
 		else {
 			context.tries[dialogType] = tries;
 			passwordField.value = password;
-			dump("accept dialog with password: " + password + "\n");
 			dialog.acceptDialog();
 		}
 	}

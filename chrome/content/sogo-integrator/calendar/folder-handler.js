@@ -22,7 +22,6 @@ function topmostWindow() {
 CalendarHandler.prototype = {
     getExistingDirectories: function getExistingDirectories() {
         let existing = {};
-        dump("getExistingDirectories\n");
 
         let cals = this.mgr.getCalendars({});
         for (let i = 0; i < cals.length; i++) {
@@ -32,7 +31,6 @@ CalendarHandler.prototype = {
                 }
                 else {
                     existing[cals[i].uri.spec] = cals[i];
-                    dump("  cal: " + cals[i].uri.spec + "\n");
                 }
             }
         }

@@ -22,7 +22,7 @@ overlay chrome://sogo-connector/content/addressbook/contactspanel-overlay.xul ch
 
 overlay	chrome://lightning/content/messenger-overlay-sidebar.xul chrome://sogo-integrator/content/calendar/calendar-overlay.xul
 overlay chrome://calendar/content/calendar-properties-dialog.xul chrome://sogo-integrator/content/calendar/properties-overlay.xul
-overlay chrome://sogo-connector/content/calendar/calendars-list-overlay.xul chrome://sogo-integrator/content/calendar/calendars-list-overlay.xul
+overlay chrome://calendar/content/calendar-calendars-list.xul chrome://sogo-integrator/content/calendar/calendars-list-overlay.xul
 overlay chrome://calendar/content/calendar-event-dialog.xul chrome://sogo-integrator/content/calendar/calendar-event-dialog.xul
 overlay chrome://calendar/content/calendar-summary-dialog.xul chrome://sogo-integrator/content/calendar/calendar-summary-dialog.xul
 overlay chrome://calendar/content/calendar-common-sets.xul chrome://sogo-integrator/content/calendar/calendar-common-sets.xul

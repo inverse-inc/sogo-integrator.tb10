@@ -174,18 +174,13 @@ directoryChecker.prototype = {
         return folders;
     },
     onDAVQueryComplete: function onDAVQueryComplete(status, response) {
-        dump("onDAVQueryComplete status: " + status + "\n");
+        // dump("status: " + status + "\n");
         if (status > 199 && status < 400) {
             let existing
                 = this.fixedExisting(this.handler.getExistingDirectories());
             this.handler.removeDoubles();
             if (response) {
                 let folders = this.foldersFromResponse(response);
-                dump("  XX folders: " + folders + "\n");
-                for (var url in folders) {
-                    dump("  remote folder url: " + url + "\n");
-                }
-                dump("  XX folders done\n");
                 let comparison = this.compareDirectories(existing, folders);
                 if (comparison['removed'].length)
                     this.handler.removeDirectories(comparison['removed']);
@@ -203,7 +198,6 @@ directoryChecker.prototype = {
     compareDirectories: function compareDirectories(existing, result) {
         let comparison = { removed: [], renamed: [], added: [] };
         for (let url in result) {
-            dump("  result url: " + url + "\n");
             if (url[url.length - 1] != '/')
                 url = url.concat('/');
             if (!existing.hasOwnProperty(url)) {
@@ -212,7 +206,6 @@ directoryChecker.prototype = {
             }
         }
         for (let url in existing) {
-            dump("  existing url: " + url + "\n");
             if (url[url.length - 1] != '/')
                 url = url.concat('/');
             if (result.hasOwnProperty(url)) {
