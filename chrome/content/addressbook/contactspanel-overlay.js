@@ -36,8 +36,8 @@ function SOGoGetPersonalAddressBookURL() {
 	let handler = new AddressbookHandler();
 	let existing = handler.getExistingDirectories();
 	let personalURL = sogoBaseURL() + "Contacts/personal/";
-	let directory = existing[personalURL]
-		.QueryInterface(Components.interfaces.nsIRDFResource);
+	let directory = existing[personalURL].QueryInterface(Components.interfaces.nsIRDFResource);
+
 	return directory.Value;
 }
 
