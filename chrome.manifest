@@ -1,14 +1,14 @@
-content sogo-integrator chrome/content/sogo-integrator/
+content sogo-integrator chrome/content/
 
-skin    sogo-integrator classic/1.0 chrome/skin/classic/sogo-integrator/
+skin    sogo-integrator classic/1.0 chrome/skin/classic/
 
-locale  sogo-integrator en-US chrome/locale/en-US/sogo-integrator/
-locale	sogo-integrator ca chrome/locale/ca/sogo-integrator/
-locale  sogo-integrator cs chrome/locale/cs/sogo-integrator/
-locale  sogo-integrator de-DE chrome/locale/de-DE/sogo-integrator/
-locale	sogo-integrator es-ES chrome/locale/es-ES/sogo-integrator/
-locale  sogo-integrator fr-FR chrome/locale/fr-FR/sogo-integrator/
-locale	sogo-integrator it-IT chrome/locale/it-IT/sogo-integrator/
+locale  sogo-integrator en-US chrome/locale/en-US/
+locale	sogo-integrator ca chrome/locale/ca/
+locale  sogo-integrator cs chrome/locale/cs/
+locale  sogo-integrator de-DE chrome/locale/de-DE/
+locale	sogo-integrator es-ES chrome/locale/es-ES/
+locale  sogo-integrator fr-FR chrome/locale/fr-FR/
+locale	sogo-integrator it-IT chrome/locale/it-IT/
 
 overlay chrome://global/content/commonDialog.xul chrome://sogo-integrator/content/global/common-dialog-overlay.xul
 
