@@ -273,8 +273,9 @@ function checkFolders() {
             if (CalendarChecker.checkAvailability()) {
                 if (document) {
                     let toolbar = document.getElementById("subscriptionToolbar");
-                    if (toolbar)
+                    if (toolbar) {
                         toolbar.collapsed = false;
+                    }
                 }
                 let prefService = (Components.classes["@mozilla.org/preferences-service;1"]
                                              .getService(Components.interfaces.nsIPrefBranch));

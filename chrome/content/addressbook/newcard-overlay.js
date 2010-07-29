@@ -17,7 +17,7 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
 					 "chrome://sogo-integrator/content/addressbook/folder-handler.js"]);
 
 function SIOnNewCardOverlayLoad() {
-	if (gEditCard.selectedAB == kPersonalAddressbookURI) {
+	if (gEditCard.selectedAB && gEditCard.selectedAB == kPersonalAddressbookURI) {
 		let handler = new AddressbookHandler();
 		let existing = handler.getExistingDirectories();
 		let personalURL = sogoBaseURL() + "Contacts/personal/";
