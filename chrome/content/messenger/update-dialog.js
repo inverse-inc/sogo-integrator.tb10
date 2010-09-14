@@ -103,9 +103,11 @@ function downloadExtension(dlExtension) {
            | iCi.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES
            | iCi.nsIWebBrowserPersist.PERSIST_FLAGS_BYPASS_CACHE);
 
+    // nsIDownload addDownload(in short aDownloadType, in nsIURI aSource, in nsIURI aTarget,
+    //                         in AString aDisplayName, in nsIMIMEInfo aMIMEInfo, in PRTime aStartTime, 
+    //                         in nsILocalFile aTempFile, in nsICancelable aCancelable)
     var ret = downloadMgr.addDownload(-1, extensionURI, destURI, dlExtension.name,
-                                      "chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png",
-                                      null, -1, null, persist);
+                                      null, null, null, null);
     persist.progressListener = ret;
     persist.saveURI(extensionURI, null, null, null, null, destURI);
 
@@ -145,7 +147,7 @@ function installDownloadedExtensions() {
     var gExtensionManager = iCc["@mozilla.org/extensions/manager;1"]
                             .getService(iCi.nsIExtensionManager);
 
-    gExtensionManager.addUpdateListener(new inverseUpdateListener());
+    //gExtensionManager.addUpdateListener(new inverseUpdateListener());
     dump("downloads:  " + window.extensionDownloads.length + "\n");
     if (window.extensionDownloads.length) {
         for (var i = 0; i < window.extensionDownloads.length; i++) {

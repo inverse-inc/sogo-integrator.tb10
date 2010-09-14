@@ -103,11 +103,11 @@ function prepareRequiredExtensions(extensions) {
         if (extensionData) {
             // We check if we have to disable some extension that _is installed_
             // If so, let's do it right away
-            if (extensionItem.name.length > 0
+            if (extensionItem && extensionItem.name.length > 0
                 && extensionData.version == "disabled") {
                 uninstallExtensions.push(extensions[i].id);
             }
-            else if ((!extensionItem.name
+            else if ((!extensionItem || !extensionItem.name
                       || extensionData.version != extensionItem.version)
                      && extensionData.version != "disabled") {
                 extensionsURL.push({name: extensions[i].name,
@@ -136,6 +136,7 @@ function getExtensionData(rdf, extensionRDFURL, extensionURN) {
     let extensionData = null;
 
     let updates = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#updates");
+
 
     try {
         // dump("url: " + extensionRDFURL + "\n");
@@ -177,9 +178,9 @@ function GetRDFUpdateData(rdf, ds, node) {
             let appId = ds.GetTarget(appNode, applicationId, true);
             if (appId instanceof iCi.nsIRDFLiteral
                 && appId.Value == thunderbirdUID) {
-                let updateLink = ds.GetTarget(appNode, updateLink, true);
-                if (updateLink instanceof iCi.nsIRDFLiteral)
-                    updateData.url = updateLink.Value;
+                let updLink = ds.GetTarget(appNode, updateLink, true);
+                if (updLink instanceof iCi.nsIRDFLiteral)
+                    updateData.url = updLink.Value;
             }
         }
     }
