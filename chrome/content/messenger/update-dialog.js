@@ -5,39 +5,6 @@ var iCi = Components.interfaces;
 var shouldRestart = false;
 var errorsHappened = false;
 
-function inverseUpdateListener() {
-}
-
-inverseUpdateListener.prototype = {
- QueryInterface: function (aIID) {
-        if (!aIID.equals(Components.interfaces.nsISupports)
-            && !aIID.equals(Components.interfaces.nsIAddonUpdateCheckListener)
-            && !aIID.equals(Components.interfaces.nsIAddonUpdateListener)) {
-            throw Components.results.NS_ERROR_NO_INTERFACE;
-        }
-
-        return this;
-    },
- onAddonUpdateEnded: function(addon, status) {
-        dump("addon: " + addon.id + "; status: " + status + "\n");
-    },
- onAddonUpdateStarted: function(addon) {
-        dump("addonupdatestarted\n");
-    },
- onUpdateEnded: function() {
-        dump("updateended\n");
-    },
- onUpdateStarted: function() {
-        dump("updatestarted\n");
-    },
- onStateChange: function(addon, state, value) {
-        dump("onstatechange: " + state + "\n");
-    },
- onProgress: function (addon, value, maxValue) {
-        dump("onprogress: " + value + "\n");
-    }
-};
-
 function configureCurrentExtensions(cfExtensions) {
     if (cfExtensions.length > 0) {
         for (var i = 0; i < cfExtensions.length; i++)
@@ -103,9 +70,11 @@ function downloadExtension(dlExtension) {
            | iCi.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES
            | iCi.nsIWebBrowserPersist.PERSIST_FLAGS_BYPASS_CACHE);
 
+    //
     // nsIDownload addDownload(in short aDownloadType, in nsIURI aSource, in nsIURI aTarget,
     //                         in AString aDisplayName, in nsIMIMEInfo aMIMEInfo, in PRTime aStartTime, 
     //                         in nsILocalFile aTempFile, in nsICancelable aCancelable)
+    //
     var ret = downloadMgr.addDownload(-1, extensionURI, destURI, dlExtension.name,
                                       null, null, null, null);
     persist.progressListener = ret;
@@ -147,7 +116,6 @@ function installDownloadedExtensions() {
     var gExtensionManager = iCc["@mozilla.org/extensions/manager;1"]
                             .getService(iCi.nsIExtensionManager);
 
-    //gExtensionManager.addUpdateListener(new inverseUpdateListener());
     dump("downloads:  " + window.extensionDownloads.length + "\n");
     if (window.extensionDownloads.length) {
         for (var i = 0; i < window.extensionDownloads.length; i++) {

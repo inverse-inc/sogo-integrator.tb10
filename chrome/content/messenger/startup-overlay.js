@@ -134,12 +134,10 @@ function prepareRequiredExtensions(extensions) {
 
 function getExtensionData(rdf, extensionRDFURL, extensionURN) {
     let extensionData = null;
-
     let updates = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#updates");
 
-
     try {
-        // dump("url: " + extensionRDFURL + "\n");
+        dump("url: " + extensionRDFURL + "\n");
         let ds = rdf.GetDataSourceBlocking(extensionRDFURL);
         let urlNode = ds.GetTarget(extensionURN, updates, true);
         if (urlNode instanceof iCi.nsIRDFResource) {
