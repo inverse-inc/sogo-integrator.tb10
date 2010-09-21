@@ -87,10 +87,10 @@ AddressbookHandler.prototype = {
     renameDirectories: function(dirs) {
         for (let i = 0; i < dirs.length; i++) {
             let ab = dirs[i]['folder'];
-            let oldName = ab.description;
+            let oldName = ab.dirName;
             let displayName = dirs[i]['displayName'];
             if (oldName != displayName) {
-                ab.description = displayName;
+                ab.dirName = displayName;
             }
         }
     },

@@ -1,3 +1,9 @@
+2010-09-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/addressbook/folder-handler.js:
+	(AddressbookHandler.renameDirectories): use the "dirName" ivar
+	rather than "description" for setting the addressbook names.
+
 2010-09-14  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* chrome/content/messenger/startup-overlay.js
