@@ -17,6 +17,7 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
            "chrome://sogo-connector/content/general/mozilla.utils.inverse.ca.js",
            "chrome://inverse-library/content/sogoWebDAV.js",
            "chrome://sogo-integrator/content/addressbook/folder-handler.js",
+           "chrome://sogo-integrator/content/addressbook/categories.js",
            "chrome://sogo-integrator/content/calendar/folder-handler.js"]);
 
 function directoryChecker(type, handler) {
@@ -247,6 +248,7 @@ function checkFolders() {
                 ABChecker.start();
                 handler.ensurePersonalIsRemote();
                 handler.ensureAutoComplete();
+                SIContactCategories.synchronizeFromServer();
                 startFolderSync();
             }
         }
