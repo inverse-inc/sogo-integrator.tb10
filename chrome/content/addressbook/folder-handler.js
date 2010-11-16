@@ -105,23 +105,41 @@ AddressbookHandler.prototype = {
     },
     ensurePersonalIsRemote: function() {
         this._ensureFolderIsRemote("abook.mab");
-        let prefService = (Components.classes["@mozilla.org/preferences-service;1"]
-                           .getService(Components.interfaces.nsIPrefBranch));
-        if (this._autoCollectIsHistory(prefService))
+        let prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                                    .getService(Components.interfaces.nsIPrefBranch);
+        if (this._autoCollectIsHistory(prefService)) {
             this._ensureHistoryIsPersonal(prefService);
+        }
         this._ensureFolderIsRemote("history.mab");
     },
     _moveAddressBook: function(sourceAB, destAB) {
-        /* ugly hack: we empty the addressbook after its cards were
-         transfered, so that we can be sure the ab no longer "exists" */
-        let cardsArray = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
-        let childCards = sourceAB.childCards;
-        while (childCards.hasMoreElements()) {
-            let card = childCards.getNext();
-            destAB.addCard(card);
-            cardsArray.appendElement(card, false);
+        if (sourceAB.URI != destAB.URI) {
+            /* ugly hack: we empty the addressbook after its cards were
+             transfered, so that we can be sure the ab no longer "exists" */
+            let cardsArray = Components.classes["@mozilla.org/array;1"]
+                                       .createInstance(Components.interfaces.nsIMutableArray);
+
+            let childCards = sourceAB.childCards;
+            let count = 0;
+            while (childCards.hasMoreElements()) {
+                let card = childCards.getNext();
+                let cloneCard = Components.classes["@mozilla.org/addressbook/moz-abmdbcard;1"]
+                    .createInstance(Components.interfaces.nsIAbCard);
+                cloneCard.copy(card);
+                destAB.addCard(cloneCard);
+                cardsArray.appendElement(card, false);
+                count++;
+            }
+            sourceAB.deleteCards(cardsArray);
+            sourceAB.QueryInterface(Components.interfaces.nsIAbMDBDirectory).database.close(true);
+            if (count) {
+                dump("moved " + count + " cards from " + sourceAB.URI
+                     + " to " + destAB.URI + "\n");
+            }
         }
-        sourceAB.deleteCards(cardsArray);
+        else {
+            dump("_moveAddressBook: source and destination AB are the same\n");
+        }
     },
     _ensureFolderIsRemote: function(filename) {
         let localURI = "moz-abmdbdirectory://" + filename;
