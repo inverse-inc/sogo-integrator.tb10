@@ -19,7 +19,6 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
            "chrome://sogo-connector/content/common/common-dav.js"]);
 
 function AddressbookHandler() {
-    this.doubles = {};
 }
 
 AddressbookHandler.prototype = {
@@ -112,6 +111,18 @@ AddressbookHandler.prototype = {
             this._ensureHistoryIsPersonal(prefService);
         this._ensureFolderIsRemote("history.mab");
     },
+    _moveAddressBook: function(sourceAB, destAB) {
+        /* ugly hack: we empty the addressbook after its cards were
+         transfered, so that we can be sure the ab no longer "exists" */
+        let cardsArray = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
+        let childCards = sourceAB.childCards;
+        while (childCards.hasMoreElements()) {
+            let card = childCards.getNext();
+            destAB.addCard(card);
+            cardsArray.appendElement(card, false);
+        }
+        sourceAB.deleteCards(cardsArray);
+    },
     _ensureFolderIsRemote: function(filename) {
         let localURI = "moz-abmdbdirectory://" + filename;
         let localAB = SCGetDirectoryFromURI(localURI);
@@ -133,17 +144,7 @@ AddressbookHandler.prototype = {
                 personalAB = existing[personalURL];
             }
             if (personalAB) {
-                /* ugly hack, we empty the addressbook after its cards were
-                 transfered, so that we can be sure the ab no longer "exists" */
-                SCCopyAddressBook(localAB, personalAB);
-                // let cardsArray = Components.classes["@mozilla.org/array;1"]
-                // 												   .createInstance(Components.interfaces.nsIArray);
-                // let cards = localAB.childCards;
-                // while (cards.hasMoreElements) {
-                // 	for (let i = 0; i < cards.length; i++)
-                // 		cardsArray.appendElement(cards[i], false);
-                // }
-                // localAB.deleteCards(cardsArray);
+                this._moveAddressBook(localAB, personalAB);
                 SCDeleteDirectory(localAB);
             }
             else

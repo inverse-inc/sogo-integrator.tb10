@@ -1,3 +1,37 @@
+2010-11-03  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/addressbook/folder-handler.js:
+	(AddressbookHandler._moveAddressBook): new method, derived from
+	sogo-connector's previous SCCopyAddressBook method, with added
+	code to remove copied cards.
+	(AddressbookHandler._ensureFolderIsremote): invoke
+	_moveAddressBook so that cards are deleted, even though we
+	expected the addressbook file to be properly deleted instead...
+
+2010-10-29  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/addressbook/categories.js:
+	(SIContactCategories.synchronizeFromServer): test
+	propstat["prop"][0] to avoid an exception with servers that do not
+	support the "contacts-categories" property.
+
+2010-10-27  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/messenger/folders-update.js: trigger the
+	synchronization of categories at startup.
+
+	* chrome/content/addressbook/categories.js: new helper module
+	providing synchronization methods with the SOGo server for
+	categories.
+
+	* chrome/content/addressbook/common-card-overlay.js: same as below
+	for categories extracted from cards.
+
+	* chrome/content/preferences/preferences-overlay.js: new overlay
+	module for intercepting manipulations on categories and sending
+	the new list of categories to the server when a changed has
+	occurred.
+
 2010-09-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/addressbook/folder-handler.js:
