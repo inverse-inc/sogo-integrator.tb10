@@ -11,13 +11,7 @@
   <Description about="urn:mozilla:install-manifest"
     em:name="Inverse SOGo Integrator"
     em:id="sogo-integrator@inverse.ca"
-<<<<<<< variant A
     em:version="3.104"
->>>>>>> variant B
-    em:version="3.104pre2"
-####### Ancestor
-    em:version="3.104pre1"
-======= end
     em:description="A SOGo integration plugin for Thunderbird and Lightning"
     em:iconURL="chrome://sogo-integrator/skin/sogo.png"
     em:creator="Inverse &lt;support@inverse.ca&gt;"
