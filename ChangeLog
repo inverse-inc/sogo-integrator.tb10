@@ -1,3 +1,10 @@
+2010-11-16  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/addressbook/folder-handler.js:
+	(AddressbookHandler._moveAddressBook): add cloned versions of the
+	cards to avoid raising their reference count, which otherwise
+	prevents their proper deletion.
+
 2010-11-03  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/addressbook/folder-handler.js:
