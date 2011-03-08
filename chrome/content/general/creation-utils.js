@@ -38,7 +38,7 @@ createOperation.prototype = {
 			proppatch.proppatch("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 													+ "<propertyupdate xmlns=\"DAV:\">"
 													+ "<set>"
-													+ "<prop><displayname>" + this.displayName + "</displayname>"
+													+ "<prop><displayname>" + xmlEscape(this.displayName) + "</displayname>"
 													+ "</prop></set></propertyupdate>");
 		}
 	},

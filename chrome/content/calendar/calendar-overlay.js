@@ -66,7 +66,7 @@ function openDeletePersonalDirectoryForbiddenDialog() {
     alert(bundle.getString("deletePersonalCalendarError"));
 }
 
-function openCalendarUnsubcriptionDialog() {
+function openCalendarUnsubscriptionDialog() {
     let calendar = getSelectedCalendar();
 
     let url = calendar.uri.spec;
@@ -94,8 +94,15 @@ function openCalendarUnsubcriptionDialog() {
                 deleteFolder(url, handler);
             }
         }
-        else
-            unsubscribeFromFolder(url, handler);
+        else {
+	    let title = calGetString("calendar", "unsubscribeCalendarTitle");
+	    let msg = calGetString("calendar", "unsubscribeCalendarMessage", [calendar.name]);
+            let promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                          .getService(Components.interfaces.nsIPromptService);
+            if (promptService.confirm(window, title, msg, {})) {
+                unsubscribeFromFolder(url, handler);
+            }
+        }
     }
     else if (_confirmDelete(calendar.name)) {
         let calMgr = getCalendarManager();

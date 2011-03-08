@@ -1,3 +1,17 @@
+2011-03-08  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/calendar/calendar-overlay.js
+	(openCalendarUnsubscriptionDialog): Fixed typo in function named
+	and included confirmation code from calendar-common-sets.js for
+	unsubscriptions.
+
+	* chrome/content/calendar/calendar-common-sets.{js,xul}: removed
+	obsolete files.
+
+	* chrome/content/general/creation-utils.js
+	(createOperation.onMkColQueryComplete): the display name must be
+	passed through xmlEscape().
+
 2010-11-16  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/addressbook/folder-handler.js:

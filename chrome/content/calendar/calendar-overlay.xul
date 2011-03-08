@@ -23,7 +23,7 @@
     <command id="calendar_subscribe_calendar_command"
       oncommand="openCalendarSubcriptionDialog()"/>
     <command id="calendar_unsubscribe_calendar_command"
-      oncommand="openCalendarUnsubcriptionDialog()"/>
+      oncommand="openCalendarUnsubscriptionDialog()"/>
     <command id="calendar_manage_sogo_acls_command"
       oncommand="manageCalendarACL()"/>
     <command id="calendar_sogo_showonly_command"
