@@ -33,7 +33,7 @@ function openCalendarSubcriptionDialog() {
 function manageCalendarACL() {
     let calendar = getSelectedCalendar();
     let aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                           .getService(Components.interfaces.nsISupports);
+                           .getService(Components.interfaces.calICalDAVACLManager);
     let entry = null;
     let opListener = {
         onGetResult: function(calendar, status, itemType, detail, count, items) {
@@ -92,7 +92,7 @@ function openCalendarUnsubscriptionDialog() {
         let handler = new CalendarHandler();
 
         let aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                               .getService(Components.interfaces.nsISupports);
+                               .getService(Components.interfaces.calICalDAVACLManager);
         let entry = null;
         let opListener = {
             onGetResult: function(calendar, status, itemType, detail, count, items) {
