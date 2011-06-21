@@ -45,7 +45,7 @@ function editSelectedEntry() {
 function addEntry() {
 	openDialog("chrome://sogo-integrator/content/general/subscription-dialog.xul",
 						 "aclUserAdd",
-						 "dialog,titlebar,modal");
+						 "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes");
 }
 
 function subscriptionDialogType() {

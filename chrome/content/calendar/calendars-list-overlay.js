@@ -28,7 +28,7 @@ function onInverseCalendarsListOverlayLoad() {
     popup.insertBefore(properties, popup.firstChild);
 
     separator = document.createElement("menuseparator");
-    popup.insertBefore(separator, popup.firstChild);
+    popup.insertBefore(separator, popup.firstChild)
     popup.insertBefore(showall, popup.firstChild);
     popup.insertBefore(showonly, popup.firstChild);
 
@@ -61,10 +61,23 @@ SICalendarListTreeController.prototype = {
             let calendar = getSelectedCalendar();
             if (calendar.type == "caldav") {
                 let aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                                       .getService(Components.interfaces.nsISupports)
-                                       .wrappedJSObject;
-                let entry = aclMgr.calendarEntry(calendar.uri);
-                if (entry.userIsOwner()) {
+                                       .getService(Components.interfaces.nsISupports);
+                let entry = null;
+                let opListener = {
+                    onGetResult: function(calendar, status, itemType, detail, count, items) {
+                        ASSERT(false, "unexpected!");
+                    },
+                    onOperationComplete: function(opCalendar, opStatus, opType, opId, opDetail) {
+                        entry = opDetail;
+                    }
+                };
+                aclMgr.getCalendarEntry(calendar, opListener);
+                if (!entry) {
+                    /* we expect the calendar acl entry to be cached at this point */
+                    ASSERT(false, "unexpected!");
+                }
+
+                if (entry.userIsOwner) {
                     acl_menuitem.label = acl_menuitem.getAttribute("managelabel");
                     delete_menuitem.label = delete_menuitem.getAttribute("deletelabel");
                 } else {
@@ -84,7 +97,7 @@ SICalendarListTreeController.prototype = {
                 // For local/webdav calendars, we show the manage label and the delete one
                 acl_menuitem.label = acl_menuitem.getAttribute("managelabel");
                 delete_menuitem.label = delete_menuitem.getAttribute("deletelabel");
-                return isEnabled = false;
+                isEnabled = false;
             }
         } else {
             isEnabled = true;

@@ -19,33 +19,45 @@ jsInclude(["chrome://sogo-integrator/content/calendar/folder-handler.js",
 function openCalendarCreationDialog() {
     openDialog("chrome://sogo-integrator/content/calendar/creation-dialog.xul",
                "calendarSubscribe",
-               "dialog,titlebar,modal",
+	       "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes",
                this);
 }
 
 function openCalendarSubcriptionDialog() {
     openDialog("chrome://sogo-integrator/content/general/subscription-dialog.xul",
                "calendarSubscribe",
-               "dialog,titlebar,modal",
+	       "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes",
                this);
 }
 
 function manageCalendarACL() {
     let calendar = getSelectedCalendar();
     let aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                           .getService(Components.interfaces.nsISupports)
-                           .wrappedJSObject;
-    let entry = aclMgr.calendarEntry(calendar.uri);
+                           .getService(Components.interfaces.nsISupports);
+    let entry = null;
+    let opListener = {
+        onGetResult: function(calendar, status, itemType, detail, count, items) {
+            ASSERT(false, "unexpected!");
+        },
+        onOperationComplete: function(opCalendar, opStatus, opType, opId, opDetail) {
+            entry = opDetail;
+        }
+    };
+    aclMgr.getCalendarEntry(calendar, opListener);
+    if (!entry) {
+        /* we expect the calendar acl entry to be cached at this point */
+        ASSERT(false, "unexpected!");
+    }
 
-    if (entry.userIsOwner()) {
-        let url = calendar.uri.spec;
+    let url = calendar.uri.spec;
+    if (entry.userIsOwner) {
         openDialog("chrome://sogo-integrator/content/general/acl-dialog.xul",
                    "calendarACL",
-                   "dialog,titlebar,modal",
+	           "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes",
                    {url: url,
                     rolesDialogURL: "chrome://sogo-integrator/content/calendar/roles-dialog.xul"});
     } else {
-        aclMgr.refresh(calendar.uri);
+        aclMgr.refresh(url);
     }
 }
 
@@ -78,11 +90,24 @@ function openCalendarUnsubscriptionDialog() {
             offset++;
         let part = parts[parts.length-offset];
         let handler = new CalendarHandler();
-        let mgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                            .getService(Components.interfaces.nsISupports)
-                            .wrappedJSObject;
-        let entry = mgr.calendarEntry(calendar.uri);
-        if (entry.userIsOwner()) {
+
+        let aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                               .getService(Components.interfaces.nsISupports);
+        let entry = null;
+        let opListener = {
+            onGetResult: function(calendar, status, itemType, detail, count, items) {
+                ASSERT(false, "unexpected!");
+            },
+            onOperationComplete: function(opCalendar, opStatus, opType, opId, opDetail) {
+                entry = opDetail;
+            }
+        };
+        aclMgr.getCalendarEntry(calendar, opListener);
+        if (!entry) {
+            /* we expect the calendar acl entry to be cached at this point */
+            ASSERT(false, "unexpected!");
+        }
+        if (entry.userIsOwner) {
             dump("url = " + url + " baseURL = " + baseURL + "\n");
             let urlParts = url.split("/");
 

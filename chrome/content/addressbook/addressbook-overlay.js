@@ -24,14 +24,14 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
 function openAbCreationDialog() {
 	openDialog("chrome://sogo-integrator/content/addressbook/creation-dialog.xul",
 						 "addressbookCreate",
-						 "dialog,titlebar,modal",
+						 "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes",
 						 this);
 }
 
 function openAbSubscriptionDialog() {
 	openDialog("chrome://sogo-integrator/content/general/subscription-dialog.xul",
 						 "addressbookSubscribe",
-						 "dialog,titlebar,modal",
+						 "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes",
 						 this);
 }
 
@@ -47,7 +47,7 @@ function openABACLDialog() {
 
 	openDialog("chrome://sogo-integrator/content/general/acl-dialog.xul",
 						 "addressbookACL",
-						 "dialog,titlebar,modal",
+						 "chrome,titlebar,centerscreen,alwaysRaised=yes,dialog=yes",
 						 {url: url,
 								 rolesDialogURL: "chrome://sogo-integrator/content/addressbook/roles-dialog.xul"});
 }
