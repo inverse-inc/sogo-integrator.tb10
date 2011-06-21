@@ -28,7 +28,7 @@ function onInverseCalendarsListOverlayLoad() {
     popup.insertBefore(properties, popup.firstChild);
 
     separator = document.createElement("menuseparator");
-    popup.insertBefore(separator, popup.firstChild)
+    popup.insertBefore(separator, popup.firstChild);
     popup.insertBefore(showall, popup.firstChild);
     popup.insertBefore(showonly, popup.firstChild);
 
