@@ -19,6 +19,7 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
            "chrome://sogo-connector/content/common/common-dav.js"]);
 
 function AddressbookHandler() {
+    this.doubles = {};
 }
 
 AddressbookHandler.prototype = {

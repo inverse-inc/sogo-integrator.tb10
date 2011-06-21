@@ -5,7 +5,7 @@
   xmlns:em="http://www.mozilla.org/2004/em-rdf#"
   xmlns:NC="http://home.netscape.com/NC-rdf#">
   <Seq about="http://inverse.ca/sogo-integrator/extensions"
-    isi:updateURL="http://evariste.inverse.ca/plugins/updates.php?plugin=%ITEM_ID%&amp;version=%ITEM_VERSION%&amp;platform=%PLATFORM%">
+    isi:updateURL="http://wolfomachine.local/plugins/updates.php?plugin=%ITEM_ID%&amp;version=%ITEM_VERSION%&amp;platform=%PLATFORM%">
 <!--  <li>
       <Description
         em:id="lookout@aron.rubin"
