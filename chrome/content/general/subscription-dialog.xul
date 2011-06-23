@@ -28,7 +28,9 @@
     <hbox id="searchBox">
       <textbox id="peopleSearchInput" type="search" flex="1"
                emptytext="&subscription.searchcriteria.label;"/>
-      <menuitem id="throbber-box" busy="false" disabled="true"/>
+      <vbox id="throbber-box" busy="false" pack="center">
+         <image src="chrome://global/skin/media/throbber.png"/>
+      </vbox>
     </hbox>
     <tree flex="1" searching="clean" id="subscriptionTree" seltype="single" hidecolumnpicker="true">
       <treecols>

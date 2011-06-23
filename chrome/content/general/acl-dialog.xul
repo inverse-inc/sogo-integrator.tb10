@@ -40,12 +40,10 @@
                    command="AclCommandAdd"/>
     <toolbarbutton id="removeUserBtn" tooltiptext="&acl.removeUser.label;"
                    command="AclCommandDelete"/>
-    <toolbarspring/>
-    <toolbaritem>
-      <button mode="dialog"
-              class="acl-toolbar-button"
-              id="throbber"/>
-    </toolbaritem>
+    <spacer flex="1"/>
+    <vbox id="throbber-box" busy="false" pack="center">
+      <image src="chrome://global/skin/media/throbber.png"/>
+    </vbox>
   </hbox>
   <listbox flex="true" id="userList" seltype="single">
   </listbox>

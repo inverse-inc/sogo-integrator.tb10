@@ -4,17 +4,18 @@
   padding: 0px;
   margin: 5px; }
 
-#throbber
-{ width: 24px;
-  height: 24px;
-  border: 0px none #aaa;
-  -moz-user-focus: ignore;
-  -moz-appearance: none;
-  -moz-box-sizing: content-box;
-  background-color: transparent; }
+#throbber-box image
+{
+  visibility: hidden;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
 
-#throbber.visible
-{ list-style-image: url("chrome://global/skin/throbber/Throbber-small.gif"); }
+#throbber-box[busy="true"] image
+{
+  visibility: visible;
+}
 
 #acl-toolbox separator
 { width: 2px; }

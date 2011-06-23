@@ -110,10 +110,10 @@ function deleteEntry() {
 	}
 }
 
-function showThrobber(display) {
-	var throbber = document.getElementById("throbber");
-	var newClass = (display ? "visible" : "");
-	throbber.setAttribute("class", newClass);
+function showThrobber(busyState) {
+	var throbber = document.getElementById("throbber-box");
+	var newBusyState = (busyState ? "true" : "false");
+	throbber.setAttribute("busy", newBusyState);
 }
 
 function onLoad() {
