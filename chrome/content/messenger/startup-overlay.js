@@ -237,6 +237,7 @@ function _setupCalStartupObserver() {
 	let calendars = compCalendar.getCalendars({});
 	for each (let calendar in calendars) {
       if (calendar.type == "caldav"
+          && calendar.readOnly
           && !calendar.getProperty("disabled")) {
           calDavCount++;
       }
