@@ -1,3 +1,15 @@
+2011-11-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/calendar/folder-handler.js
+	(CalendarHandler.addDirectories): pass "true" as value to the new
+	"useCache" parameter to calCalendarManager.registerCalendar.
+
+2011-11-14  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/messenger/folders-update.js
+	(directoryChecker.checkAvailability): made asynchronous to avoid
+	blocking the network thread.
+
 2011-03-08  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/calendar/calendar-overlay.js

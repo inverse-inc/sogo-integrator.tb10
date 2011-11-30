@@ -29,23 +29,23 @@ function directoryChecker(type, handler) {
 directoryChecker.prototype = {
     additionalProperties: null,
     baseURL: sogoBaseURL(),
-    _checkHTTPAvailability: function checkAvailability() {
-        let available;
-
+    _checkHTTPAvailability: function checkAvailability(yesCallback) {
         try {
-            let xmlRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
-                                       .createInstance(Components.interfaces.nsIXMLHttpRequest);
-            xmlRequest.open("OPTIONS", this.baseURL + this.type, false);
-            xmlRequest.send("");
-            available = (xmlRequest.status != 404);
+            let target = {
+                onDAVQueryComplete: function(aStatus, aResponse, aHeaders, aData) {
+                    if (aStatus != 0 && aStatus != 404) {
+                        yesCallback();
+                    }
+                }
+            };
+            let options = new sogoWebDAV(this.baseURL + this.type, target);
+            options.options();
         }
         catch(e) {
-            available = true;
+            yesCallback();
         }
-
-        return available;
     },
-    checkAvailability: function checkAvailability() {
+    checkAvailability: function checkAvailability(yesCallback) {
         let manager = Components.classes['@inverse.ca/context-manager;1']
                                 .getService(Components.interfaces.inverseIJSContextManager).wrappedJSObject;
         let context = manager.getContext("inverse.ca/folders-update");
@@ -53,11 +53,8 @@ directoryChecker.prototype = {
             context.availability = {};
         let available = context.availability[this.type];
         if (typeof (available) == "undefined") {
-            available = this._checkHTTPAvailability();
-            context.availability[this.type] = available;
+            this._checkHTTPAvailability(function() { context.availability[this.type] = true; yesCallback(); } );
         }
-
-        return available;
     },
     start: function start() {
         let propfind = new sogoWebDAV(this.baseURL + this.type, this);
@@ -244,13 +241,13 @@ function checkFolders() {
             cleanupAddressBooks();
             let handler = new AddressbookHandler();
             let ABChecker = new directoryChecker("Contacts", handler);
-            if (ABChecker.checkAvailability()) {
-                ABChecker.start();
-                handler.ensurePersonalIsRemote();
-                handler.ensureAutoComplete();
-                SIContactCategories.synchronizeFromServer();
-                startFolderSync();
-            }
+            ABChecker.checkAvailability(function() {
+                                            ABChecker.start();
+                                            handler.ensurePersonalIsRemote();
+                                            handler.ensureAutoComplete();
+                                            SIContactCategories.synchronizeFromServer();
+                                            startFolderSync();
+                                        });
         }
     }
     else {
@@ -272,33 +269,33 @@ function checkFolders() {
         }
         if (handler) {
             let CalendarChecker = new directoryChecker("Calendar", handler);
-            if (CalendarChecker.checkAvailability()) {
-                if (document) {
-                    let toolbar = document.getElementById("subscriptionToolbar");
-                    if (toolbar) {
-                        toolbar.collapsed = false;
-                    }
-                }
-                let prefService = (Components.classes["@mozilla.org/preferences-service;1"]
-                                             .getService(Components.interfaces.nsIPrefBranch));
-                let disableCalendaring;
-                try {
-                    disableCalendaring
-                        = prefService.getBoolPref("sogo-integrator.disable-calendaring");
-                }
-                catch(e) {
-                    disableCalendaring = false;
-                }
-                if (disableCalendaring) {
-                    CalendarChecker.removeAllExisting();
-                    hideLightningWidgets("true");
-                }
-                else {
-                    handler.removeHomeCalendar();
-                    CalendarChecker.start();
-                    // hideLightningWidgets("false");
-                }
-            }
+            CalendarChecker.checkAvailability(function() {
+                                                  if (document) {
+                                                      let toolbar = document.getElementById("subscriptionToolbar");
+                                                      if (toolbar) {
+                                                          toolbar.collapsed = false;
+                                                      }
+                                                  }
+                                                  let prefService = (Components.classes["@mozilla.org/preferences-service;1"]
+                                                                     .getService(Components.interfaces.nsIPrefBranch));
+                                                  let disableCalendaring;
+                                                  try {
+                                                      disableCalendaring
+                                                          = prefService.getBoolPref("sogo-integrator.disable-calendaring");
+                                                  }
+                                                  catch(e) {
+                                                      disableCalendaring = false;
+                                                  }
+                                                  if (disableCalendaring) {
+                                                      CalendarChecker.removeAllExisting();
+                                                      hideLightningWidgets("true");
+                                                  }
+                                                  else {
+                                                      handler.removeHomeCalendar();
+                                                      CalendarChecker.start();
+                                                      // hideLightningWidgets("false");
+                                                  }
+                                              });
         }
     } else {
         console.logStringMessage("You must use at least Mozilla Lightning 1.0 with this version of SOGo Integrator.");

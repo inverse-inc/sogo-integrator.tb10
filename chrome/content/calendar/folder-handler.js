@@ -92,7 +92,6 @@ CalendarHandler.prototype = {
                 directory.setProperty("suppressAlarms", false);
             }
         }
-        directory.setProperty("cache.enabled", true);
         if (color)
             directory.setProperty("color", color);
     },
@@ -103,9 +102,8 @@ CalendarHandler.prototype = {
         dump("addDirectories\n");
         for (let i = 0; i < newDirs.length; i++) {
             let newURI = ioSvc.newURI(newDirs[i]['url'], null, null);
-            let newCalendar = this.mgr.createCalendar("caldav", newURI// , true CACHING
-                                                     );
-            this.mgr.registerCalendar(newCalendar);
+            let newCalendar = this.mgr.createCalendar("caldav", newURI);
+            this.mgr.registerCalendar(newCalendar, true);
             this._setDirectoryProperties(newCalendar, newDirs[i], true);
         }
     },
