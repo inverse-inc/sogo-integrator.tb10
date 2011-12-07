@@ -33,7 +33,7 @@ directoryChecker.prototype = {
         try {
             let target = {
                 onDAVQueryComplete: function(aStatus, aResponse, aHeaders, aData) {
-                    if (aStatus != 0 && aStatus != 404) {
+                    if (aStatus != 0 && aStatus != 404 && yesCallback) {
                         yesCallback();
                     }
                 }
@@ -42,7 +42,9 @@ directoryChecker.prototype = {
             options.options();
         }
         catch(e) {
-            yesCallback();
+            if (yesCallback) {
+                yesCallback();
+            }
         }
     },
     checkAvailability: function checkAvailability(yesCallback) {
@@ -52,8 +54,13 @@ directoryChecker.prototype = {
         if (!context.availability)
             context.availability = {};
         let available = context.availability[this.type];
-        if (typeof (available) == "undefined") {
-            this._checkHTTPAvailability(function() { context.availability[this.type] = true; yesCallback(); } );
+        if (typeof(available) == "undefined") {
+            this._checkHTTPAvailability(function() { context.availability[this.type] = true; if (yesCallback) yesCallback(); } );
+        }
+        else {
+            if (available && yesCallback) {
+                yesCallback();
+            }
         }
     },
     start: function start() {

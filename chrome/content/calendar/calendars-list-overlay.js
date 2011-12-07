@@ -17,6 +17,8 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
 
 window.addEventListener("load", onInverseCalendarsListOverlayLoad, false);
 
+let sogoCalendarsAvailable = false;
+
 function onInverseCalendarsListOverlayLoad() {
     let popup = document.getElementById("list-calendars-context-menu");
     let properties = document.getElementById("list-calendars-context-edit");
@@ -87,8 +89,15 @@ SICalendarListTreeController.prototype = {
 
                 let length = sogoBaseURL().length;
                 if (calendar.uri.spec.substr(0, length) == sogoBaseURL()) {
-                    let CalendarChecker = new directoryChecker("Calendar");
-                    isEnabled = CalendarChecker.checkAvailability();
+                    if (!sogoCalendarsAvailable) {
+                        let CalendarChecker = new directoryChecker("Calendar");
+                        let yesCallback = function () {
+                            sogoCalendarsAvailable = true;
+                            goUpdateCommand("calendar_manage_sogo_acls_command");
+                        };
+                        CalendarChecker.checkAvailability(yesCallback);
+                    }
+                    isEnabled = sogoCalendarsAvailable;
                 }
                 else
                     isEnabled = true;

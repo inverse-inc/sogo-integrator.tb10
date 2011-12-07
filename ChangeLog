@@ -1,3 +1,15 @@
+2011-12-07  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/calendar/calendars-list-overlay.js
+	(SICalendarListTreeController.isCommandEnabled): directoryChecker
+	is now callback based, when first invoked, provide a proper
+	"yesCallback" and reinvoke the command check to properly enable
+	our custom menus.
+
+	* chrome/content/messenger/folders-update.js:
+	(directoryChecker.checkAvailability) invoke "yesCallback" only
+	when set.
+
 2011-11-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/calendar/folder-handler.js
