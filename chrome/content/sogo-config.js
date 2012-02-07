@@ -36,7 +36,7 @@ function sogoHostname() {
 function sogoBaseURL() {
 	if (!sogoConfig['baseURL']) {
 		var rdf = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-			.getService(Components.interfaces.nsIRDFService);
+												.getService(Components.interfaces.nsIRDFService);
 		var extensions
 			= rdf.GetResource("http://inverse.ca/sogo-integrator/extensions");
 		var updateURLres
@@ -56,7 +56,7 @@ function sogoBaseURL() {
 		}
 
 		var prefService = (Components.classes["@mozilla.org/preferences-service;1"]
-											 .getService(Components.interfaces.nsIPrefBranch));
+																 .getService(Components.interfaces.nsIPrefBranch));
 		var sogoPrefix;
 		try {
 			sogoPrefix = "/" + prefService.getCharPref("sogo-integrator.sogo-prefix");

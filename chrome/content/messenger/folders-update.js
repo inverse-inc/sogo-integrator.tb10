@@ -55,7 +55,8 @@ directoryChecker.prototype = {
             context.availability = {};
         let available = context.availability[this.type];
         if (typeof(available) == "undefined") {
-            this._checkHTTPAvailability(function() { context.availability[this.type] = true; if (yesCallback) yesCallback(); } );
+            let this_ = this;
+            this._checkHTTPAvailability(function() { context.availability[this_.type] = true; if (yesCallback) yesCallback(); } );
         }
         else {
             if (available && yesCallback) {
@@ -233,11 +234,11 @@ function checkFolders() {
     let console = Components.classes["@mozilla.org/consoleservice;1"]
                             .getService(Components.interfaces.nsIConsoleService);
 
-    let gExtensionManager = Components.classes["@mozilla.org/extensions/manager;1"]
+/*    let gExtensionManager = Components.classes["@mozilla.org/extensions/manager;1"]
                                       .getService(Components.interfaces.nsIExtensionManager);
     let connectorItem = gExtensionManager.getItemForID("sogo-connector@inverse.ca");
     if (connectorItem
-        && checkExtensionVersion(connectorItem.version, "3.100")) {
+        && checkExtensionVersion(connectorItem.version, "3.100")) { */
         let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                .getService(Components.interfaces.mozIJSSubScriptLoader);
         if (GroupDavSynchronizer) {
@@ -256,15 +257,15 @@ function checkFolders() {
                                             startFolderSync();
                                         });
         }
-    }
-    else {
-        console.logStringMessage("You must use at least SOGo Connector 3.1 with this version of SOGo Integrator.");
-    }
+    // }
+    // else {
+    //     console.logStringMessage("You must use at least SOGo Connector 3.1 with this version of SOGo Integrator.");
+    // }
 
 
-    let lightningItem = gExtensionManager.getItemForID("{e2fda1a4-762b-4020-b5ad-a41df1933103}");
-    if (lightningItem
-        && checkExtensionVersion(lightningItem.version, "1.0")) {
+    // let lightningItem = gExtensionManager.getItemForID("{e2fda1a4-762b-4020-b5ad-a41df1933103}");
+    // if (lightningItem
+    //     && checkExtensionVersion(lightningItem.version, "1.0")) {
         let handler;
         try {
             handler = new CalendarHandler();
@@ -304,9 +305,9 @@ function checkFolders() {
                                                   }
                                               });
         }
-    } else {
-        console.logStringMessage("You must use at least Mozilla Lightning 1.0 with this version of SOGo Integrator.");
-    }
+    // } else {
+    //     console.logStringMessage("You must use at least Mozilla Lightning 1.0 with this version of SOGo Integrator.");
+    // }
 
     dump("startup done\n");
 }

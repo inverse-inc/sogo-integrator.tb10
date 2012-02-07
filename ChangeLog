@@ -1,3 +1,27 @@
+2012-02-07  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/messenger/startup-overlay.js,
+	chrome/content/messenger/update-dialog.js: updated to the new
+	AddonManager API.
+
+	* chrome/content/messenger/folders-update.js: disabled version checks.
+	(checkAvailability): create a new reference to "this" for the
+	callback function.
+
+	* chrome/content/messenger/startup-overlay.js: temporarily
+	disabled update code.
+
+2012-02-06  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/general/subscription-utils.js (subscriptionURL):
+	properly encode the folder url part with encodeURIComponent.
+
+2012-01-12  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/addressbook/addressbook-overlay.js
+	(SIOnLoadHandler): checkAvailability is now callback based, we
+	therefore must enable the toolbar via a callback function.
+
 2011-12-07  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/calendar/calendars-list-overlay.js

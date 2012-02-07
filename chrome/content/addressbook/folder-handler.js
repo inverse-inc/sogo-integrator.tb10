@@ -31,6 +31,9 @@ AddressbookHandler.prototype = {
         let abManager = Components.classes["@mozilla.org/abmanager;1"]
                                   .getService(Components.interfaces.nsIAbManager);
         let children = abManager.directories;
+        if (!children) {
+            dump("warning: directories not ready, sync will probably occur later\n");
+        }
         while (children.hasMoreElements()) {
             let ab = children.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
             let abURI = ab.URI;

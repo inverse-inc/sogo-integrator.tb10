@@ -1,146 +1,99 @@
 /* -*- Mode: java; c-tab-always-indent: t; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
+
 var iCc = Components.classes;
 var iCi = Components.interfaces;
 var shouldRestart = false;
 var errorsHappened = false;
-
-function configureCurrentExtensions(cfExtensions) {
-    if (cfExtensions.length > 0) {
-        for (var i = 0; i < cfExtensions.length; i++)
-            dump("configuring extension (fake): " + cfExtensions[i] + "\n");
-    }
-    this.configurationDone = true;
-    this.restartIfPossible();
-}
+let activeRemovals = 0;
+let activeInstalls = 0;
 
 function uninstallCurrentExtensions(cfExtensions) {
-    var gExtensionManager = iCc["@mozilla.org/extensions/manager;1"]
-                            .getService().QueryInterface(iCi.nsIExtensionManager);
-	
-    dump("About to remove " + cfExtensions.length + " extensions\n");
+    dump("update-dialogs.js: about to remove " + cfExtensions.length + " extensions\n");
     if (cfExtensions.length > 0) {
+        activeRemovals = cfExtensions.length;
+        shouldRestart = true;
+        function removeCallback(addon) {
+            dump("Removing existing extension: " + addon.name + "\n");
+            activeRemovals--;
+            addon.uninstall();
+            this.restartIfPossible();
+        }
         for (var i = 0; i < cfExtensions.length; i++) {
-            dump("Removing existing extension: " + cfExtensions[i] + "\n");
-            gExtensionManager.uninstallItem(cfExtensions[i]);
+            AddonManager.getAddonByID(cfExtensions[i], removeCallback);
         }
     }
-    this.uninstallDone = true;
-    shouldRestart = true;
-    this.restartIfPossible();
+}
+
+let installListener = {
+  onNewInstall: function(install) {},
+  onDownloadStarted: function(install) {},
+  onDownloadProgress: function(install) {},
+  onDownloadEnded: function(install) { installationCheckpoint(install, true, true); },
+  onDownloadCancelled: function(install) { installationCheckpoint(install, true, false); },
+  onDownloadFailed: function(install) { installationCheckpoint(install, true, false); },
+  onInstallStarted: function(install) {},
+  onInstallEnded: function(install, addon) { installationCheckpoint(install, false, true); },
+  onInstallCancelled: function(install) { installationCheckpoint(install, false, false); },
+  onInstallFailed: function(install) { installationCheckpoint(install, false, false); },
+  onExternalInstall: function(install, existingAddon, needsRestart) {}
+};
+
+function installationCheckpoint(install, isDownload, isSuccess) {
+    // dump("install: " + install.name + "; dl: " + isDownload + "; success: " + isSuccess + "\n");
+    if (isSuccess) {
+        if (!isDownload) {
+            shouldRestart = true;
+        }
+    }
+    else if (!errorsHappened) {
+        errorsHappened = !isSuccess;
+    }
+
+    if (!isDownload || !isSuccess) {
+        activeInstalls--;
+        this.restartIfPossible();
+    }
 }
 
 function downloadMissingExtensions(dlExtensions) {
-    if (dlExtensions.length > 0) {
-        //var gExtensionManager = iCc["@mozilla.org/extensions/manager;1"].getService().QueryInterface(iCi.nsIExtensionManager);
-        //     var dlDlg
-        //       = window.openDialog("chrome://mozapps/content/downloads/downloads.xul",
-        // 			  "ext", "chrome,dialog,centerscreen,resizable");
-        window.extensionDownloads = [];
-        //     window.downloadDialog = dlDlg;
-        for (var i = 0; i < dlExtensions.length; i++) {
-            dump("downloading " + dlExtensions[i].name + "\n");
-            window.extensionDownloads.push(this.downloadExtension(dlExtensions[i]));
+    function installCallback(installObject) {
+        if (installObject.error != 0) {
+            errorsHappened = true;
+            activeInstalls--;
         }
-        dump("starting loop\n");
-        window.downloadInterval = window.setInterval(window.checkDownloadInterval, 500);
-    }
-    else {
-        this.downloadsDone = true;
-        dump("no extension missing\n");
-    }
-}
-
-function downloadExtension(dlExtension) {
-    dump("download of extension: " + dlExtension.url + "\n");
-    var destURL = this.extensionDestURL(dlExtension.url);
-
-    var downloadMgr = iCc['@mozilla.org/download-manager;1']
-                      .getService(iCi.nsIDownloadManager);
-    downloadMgr.cleanUp();
-    var ioService = iCc["@mozilla.org/network/io-service;1"]
-                    .getService(iCi.nsIIOService);
-    var extensionURI = ioService.newURI(dlExtension.url, null, null);
-    var destURI = ioService.newURI(destURL, null, null);
-
-    var persist = iCc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1']
-        .createInstance(iCi.nsIWebBrowserPersist);
-    persist.persistFlags
-        = (iCi.nsIWebBrowserPersist.PERSIST_FLAGS_NO_CONVERSION
-           | iCi.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES
-           | iCi.nsIWebBrowserPersist.PERSIST_FLAGS_BYPASS_CACHE);
-
-    //
-    // nsIDownload addDownload(in short aDownloadType, in nsIURI aSource, in nsIURI aTarget,
-    //                         in AString aDisplayName, in nsIMIMEInfo aMIMEInfo, in PRTime aStartTime, 
-    //                         in nsILocalFile aTempFile, in nsICancelable aCancelable)
-    //
-    var ret = downloadMgr.addDownload(-1, extensionURI, destURI, dlExtension.name,
-                                      null, null, null, null);
-    persist.progressListener = ret;
-    persist.saveURI(extensionURI, null, null, null, null, destURI);
-
-    return ret.targetFile;
-}
-
-function extensionDestURL(extensionURL) {
-    var parts = extensionURL.split("/");
-
-    var fileLocator = iCc["@mozilla.org/file/directory_service;1"]
-                      .getService(iCi.nsIProperties);
-    var destURL = ("file://" + fileLocator.get("TmpD", iCi.nsIFile).path
-                   + "/" + parts[parts.length - 1]);
-
-    return destURL;
-}
-
-function checkDownloadInterval() {
-    // dump("check\n");
-
-    var downloadMgr = iCc['@mozilla.org/download-manager;1']
-                      .getService(iCi.nsIDownloadManager);
-    if (!downloadMgr.activeDownloadCount) {
-        clearInterval(window.downloadInterval);
-        downloadMgr.cleanUp();
-        //     if (window.downloadDialog)
-        //       window.downloadDialog.close();
-
-        this.installDownloadedExtensions();
-        dump("loop ended\n");
-    }
-
-    return true;
-}
-
-function installDownloadedExtensions() {
-    var gExtensionManager = iCc["@mozilla.org/extensions/manager;1"]
-                            .getService(iCi.nsIExtensionManager);
-
-    dump("downloads:  " + window.extensionDownloads.length + "\n");
-    if (window.extensionDownloads.length) {
-        for (var i = 0; i < window.extensionDownloads.length; i++) {
-            dump("installing: " + window.extensionDownloads[i].leafName + "\n");
+        else {
             try {
-                gExtensionManager.installItemFromFile(window.extensionDownloads[i],
-                                                      "app-profile");
+              installObject.install();
+              dump("install launched\n");
             }
             catch(e) {
                 errorsHappened = true;
-                dump("installation failure\n");
+                activeInstalls--;
             }
         }
-        shouldRestart = true;
     }
 
-    this.downloadsDone = true;
-    this.restartIfPossible();
+    activeInstalls = dlExtensions.length;
+    if (activeInstalls > 0) {
+        AddonManager.addInstallListener(installListener);
+        for each (let extension in dlExtensions) {
+            dump("update-dialogs.js: downloading " + extension["name"]
+                 + " from " + extension["url"] + "\n");
+            AddonManager.getInstallForURL(extension["url"], installCallback,
+                                          "application/x-xpinstall", null,
+                                          extension["name"]);
+        }
+    }
 }
 
 function restartIfPossible() {
-    if (this.downloadsDone && this.configurationDone && this.uninstallDone) {
+    if (activeInstalls == 0 && activeRemovals == 0) {
         if (errorsHappened) {
             if (window.opener)
                 window.opener.deferredCheckFolders();
+            AddonManager.removeInstallListener(installListener);
             window.close();
         }
         else {
@@ -176,7 +129,7 @@ function onCancelClick() {
 }
 
 function updateDialogOnReload() {
-    dump("Restarting...\n");
+    dump("update-dialogs.js: Restarting...\n");
     var appStartup = iCc["@mozilla.org/toolkit/app-startup;1"]
                      .getService(iCi.nsIAppStartup);
     appStartup.quit(iCi.nsIAppStartup.eRestart
@@ -191,21 +144,18 @@ function updateDialogOnLoad () {
     shouldRestart = false;
 
     try {
-        this.configurationDone = false;
-        this.downloadsDone = false;
         this.uninstallDone = false;
         var results = window.arguments[0];
         this.downloadMissingExtensions(results["urls"]);
-        this.configureCurrentExtensions(results["configuration"]);
         this.uninstallCurrentExtensions(results["uninstall"]);
+        restartIfPossible();
     }
     catch(e) {
-        dump("updateDialogOnLoad: " + e + "\n");
+        dump("update-dialogs.js: updateDialogOnLoad: " + e + "\n");
         if (window.opener)
             window.opener.deferredCheckFolders();
         window.close();
     }
 }
 
-// dump("we will load..\n");
 window.addEventListener("load", updateDialogOnLoad, false);

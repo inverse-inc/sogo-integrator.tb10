@@ -412,7 +412,7 @@ SubscriptionTreeView.prototype = {
             }
         }
 
-        return rows[rowIndex];
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
     },
  getCellValue: function(rowIndex, col) {
         // 		dump("getCellValue\n");
@@ -450,7 +450,7 @@ SubscriptionTreeView.prototype = {
             }
         }
 
-        return rows[rowIndex];
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
     },
  getLevel: function(rowIndex) {
         let rows = [];
@@ -478,7 +478,7 @@ SubscriptionTreeView.prototype = {
             }
         }
 
-        return rows[rowIndex];
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
     },
  getParentIndex: function(rowIndex) {
         let rows = [];
@@ -506,8 +506,8 @@ SubscriptionTreeView.prototype = {
         }
 
         // 		dump("getParentIndex: " + rows[index] + "\n");
-        return rows[rowIndex];
-    },
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
+A    },
  getProgressMode: function(rowIndex, col) {
         dump("getPRogressMode\n");
     },
@@ -542,7 +542,7 @@ SubscriptionTreeView.prototype = {
             }
         }
 
-        return rows[rowIndex];
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
     },
  isContainer: function(rowIndex) {
         let rows = new Array();
@@ -569,7 +569,7 @@ SubscriptionTreeView.prototype = {
             }
         }
 
-        return rows[rowIndex];
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
     },
  isContainerEmpty: function(rowIndex) {
         return false;
@@ -600,7 +600,7 @@ SubscriptionTreeView.prototype = {
             }
         }
 
-        return rows[rowIndex];
+        return (rows.length > rowIndex) ? rows[rowIndex] : null;
     },
  isEditable: function(rowIndex, col) {
         return false;

@@ -1,5 +1,7 @@
 /* -*- Mode: java; tab-width: 2; c-tab-always-indent: t; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
+
 function jsInclude(files, target) {
     let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                  .getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -13,28 +15,45 @@ function jsInclude(files, target) {
     }
 }
 
+jsInclude(["chrome://sogo-integrator/content/messenger/folders-update.js"]);
+
 let forcedPrefs = {};
 
 let iCc = Components.classes;
 let iCi = Components.interfaces;
 let thunderbirdUID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
 
+let appInfo = Components.classes["@mozilla.org/xre/app-info;1"]
+                        .getService(Components.interfaces.nsIXULRuntime);
+let platformId = appInfo.OS + "_" + appInfo.XPCOMABI;
+
 function checkExtensionsUpdate() {
-    let extensions = getHandledExtensions();
+    let extensionInfos = getHandledExtensions();
+    let extensions = extensionInfos["extensions"];
     dump("number of handled extensions: " + extensions.length + "\n");
-    let results = prepareRequiredExtensions(extensions);
-    if (results["urls"].length + results["uninstall"].length > 0) {
-        window.openDialog("chrome://sogo-integrator/content/messenger/update-dialog.xul",
-                          "Extensions", "status=yes", results);
-    } else {
-        dump("  no available update for handled extensions\n");
-        jsInclude(["chrome://sogo-integrator/content/messenger/folders-update.js"]);
+    if (extensions.length > 0) {
+        function checkExtensionsUpdate_callback(items) {
+            let results = prepareRequiredExtensions(extensionInfos, items);
+            if (results["urls"].length + results["uninstall"].length > 0) {
+                window.openDialog("chrome://sogo-integrator/content/messenger/update-dialog.xul",
+                                  "Extensions", "status=yes", results);
+            } else {
+                dump("  no available update for handled extensions\n");
+                checkFolders();
+            }
+        }
+
+        let x;
+        AddonManager.getAddonsByIDs([ x.id for each (x in extensions) ],
+                                    checkExtensionsUpdate_callback);
+    }
+    else {
         checkFolders();
     }
 }
 
 function getHandledExtensions() {
-    let handledExtensions = [];
+    let extensionInfos = { "extensions": [] };
 
     let rdf = iCc["@mozilla.org/rdf/rdf-service;1"].getService(iCi.nsIRDFService);
     let extensions = rdf.GetResource("http://inverse.ca/sogo-integrator/extensions");
@@ -46,8 +65,9 @@ function getHandledExtensions() {
 
     try {
         let urlNode = ds.GetTarget(extensions, updateURL, true);
-        if (urlNode instanceof iCi.nsIRDFLiteral)
-            handledExtensions.updateRDF = urlNode.Value;
+        if (urlNode instanceof iCi.nsIRDFLiteral) {
+            extensionInfos["updateRDF"] = urlNode.Value;
+        }
 
         let targets = ds.ArcLabelsOut(extensions);
         while (targets.hasMoreElements()) {
@@ -64,43 +84,51 @@ function getHandledExtensions() {
                         extension.name = name.Value;
                         // 						dump("name: " + extension.name + "\n");
                     }
-                    if (extension.id)
-                        handledExtensions.push(extension);
+                    if (extension.id) {
+                        extensionInfos["extensions"].push(extension);
+                    }
                 }
             }
         }
     }
     catch(e) {}
 
-    return handledExtensions;
+    return extensionInfos;
 }
 
-function prepareRequiredExtensions(extensions) {
+function makeExtensionURL(baseURL, extension) {
+    let replaceDict = { "%ITEM_ID%": escape(extension.id),
+                        "%ITEM_VERSION%": "0.00",
+                        "%PLATFORM%": escape(platformId) };
+
+    let url = baseURL;
+    for (let k in replaceDict) {
+        let v = replaceDict[k];
+        url = url.replace(k, v, "g");
+    }
+
+    return url;
+}
+
+function prepareRequiredExtensions(extensionInfos, extensionItems) {
+    let extensions = extensionInfos["extensions"];
+
     let extensionsURL = [];
     let unconfiguredExtensions = [];
     let uninstallExtensions = [];
 
-    let gExtensionManager = iCc["@mozilla.org/extensions/manager;1"]
-                            .getService(iCi.nsIExtensionManager);
     let preferences = Components.classes["@mozilla.org/preferences;1"]
-                      .getService(Components.interfaces.nsIPref);
+                                .getService(Components.interfaces.nsIPrefBranch);
     let appInfo = Components.classes["@mozilla.org/xre/app-info;1"]
-                  .getService(Components.interfaces.nsIXULRuntime);
+                            .getService(Components.interfaces.nsIXULRuntime);
 
-    let rdf = iCc["@mozilla.org/rdf/rdf-service;1"]
-              .getService(iCi.nsIRDFService);
-
+    let rdf = iCc["@mozilla.org/rdf/rdf-service;1"].getService(iCi.nsIRDFService);
     for (let i = 0; i < extensions.length; i++) {
-        let extensionItem = gExtensionManager.getItemForID(extensions[i].id);
-        let extensionRDFURL = extensions.updateRDF
-                              .replace("%ITEM_ID%", escape(extensions[i].id), "g")
-                              .replace("%ITEM_VERSION%", "0.00", "g")
-                              .replace("%PLATFORM%", escape(appInfo.OS + "_" + appInfo.XPCOMABI), "g");
-        let extensionURN = rdf.GetResource("urn:mozilla:extension:"
-                                           + extensions[i].id);
-        let extensionData = getExtensionData(rdf,
-                                             extensionRDFURL, extensionURN);
+        let url = makeExtensionURL(extensionInfos["updateRDF"], extensions[i]);
+        let extensionURN = rdf.GetResource("urn:mozilla:extension:" + extensions[i].id);
+        let extensionData = getExtensionData(rdf, url, extensionURN);
         if (extensionData) {
+            let extensionItem = extensionItems[i];
             // We check if we have to disable some extension that _is installed_
             // If so, let's do it right away
             if (extensionItem && extensionItem.name.length > 0
@@ -110,13 +138,13 @@ function prepareRequiredExtensions(extensions) {
             else if ((!extensionItem || !extensionItem.name
                       || extensionData.version != extensionItem.version)
                      && extensionData.version != "disabled") {
-                extensionsURL.push({name: extensions[i].name,
-                            url: extensionData.url});
+                extensionsURL.push({ name: extensions[i].name,
+                                     url: extensionData.url});
             }
             else {
                 let configured = false;
                 try {
-                    configured = preferences.GetBoolPref("inverse-sogo-integrator.extensions." + extensions[i].id + ".isconfigured");
+                    configured = preferences.getBoolPref("inverse-sogo-integrator.extensions." + extensions[i].id + ".isconfigured");
                 }
                 catch(e) {}
                 if (!configured)
@@ -127,18 +155,18 @@ function prepareRequiredExtensions(extensions) {
             dump("no data returned for '" + extensions[i].id + "'\n");
     }
 
-    return {urls: extensionsURL,
-            configuration: unconfiguredExtensions,
-            uninstall: uninstallExtensions};
+    return { urls: extensionsURL,
+             configuration: unconfiguredExtensions,
+             uninstall: uninstallExtensions};
 }
 
-function getExtensionData(rdf, extensionRDFURL, extensionURN) {
+function getExtensionData(rdf, url, extensionURN) {
     let extensionData = null;
     let updates = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#updates");
 
     try {
-        dump("url: " + extensionRDFURL + "\n");
-        let ds = rdf.GetDataSourceBlocking(extensionRDFURL);
+        dump("url: " + url + "\n");
+        let ds = rdf.GetDataSourceBlocking(url);
         let urlNode = ds.GetTarget(extensionURN, updates, true);
         if (urlNode instanceof iCi.nsIRDFResource) {
             let targets = ds.ArcLabelsOut(urlNode);

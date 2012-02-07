@@ -42,7 +42,7 @@ function subscriptionURL(url) {
 	var urlUser = urlArray[5];
 	urlArray[5] = currentUser;
 	var urlFolder = urlArray[7];
-	urlArray[7] = escapedUserName(urlUser) + "_" + urlFolder;
+	urlArray[7] = encodeURIComponent(escapedUserName(urlUser) + "_" + urlFolder);
 
 	return urlArray.join("/");
 }

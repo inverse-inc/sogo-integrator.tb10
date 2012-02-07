@@ -37,10 +37,10 @@ function openAbSubscriptionDialog() {
 
 function openABACLDialog() {
 	let dir = GetSelectedDirectory();
-	let abDir = (Components.classes["@mozilla.org/rdf/rdf-service;1"]
-							 .getService(Components.interfaces.nsIRDFService)
-							 .GetResource(dir)
-							 .QueryInterface(Components.interfaces.nsIAbDirectory));
+	
+	let abManager = Components.classes["@mozilla.org/abmanager;1"]
+												    .getService(Components.interfaces.nsIAbManager);
+	let abDir = abManager.getDirectory(dir).QueryInterface(Components.interfaces.nsIAbDirectory);
 
 	let groupdavPrefService = new GroupdavPreferenceService(abDir.dirPrefId);
 	let url = groupdavPrefService.getURL();
@@ -158,7 +158,9 @@ SIDirPaneController.prototype = {
 							let dirBase = urlParts[urlParts.length - 2];
 							if (dirBase != "personal") {
 								result = true;
-								deleteMenuIsUnsubscribe = (dirBase.indexOf("_") >= -1);
+								/* HACK: use of "_" to determine whether a resource is owned
+									 or subscribed... */
+								deleteMenuIsUnsubscribe = (dirBase.indexOf("_") > -1);
 							}
 						}
 					}
@@ -198,9 +200,10 @@ window.creationGetHandler = subscriptionGetHandler;
 function SISetupAbCommandUpdateHandlers(){
 	let controller = new SIDirPaneController();
 
-	dirTree = document.getElementById("dirTree");
-	if (dirTree)
+	let dirTree = document.getElementById("dirTree");
+	if (dirTree) {
 		dirTree.controllers.appendController(controller);
+	}
 }
 
 function SICommandUpdate_AddressBook() {
@@ -235,8 +238,9 @@ function SIOnLoadHandler() {
 
 	let toolbar = document.getElementById("subscriptionToolbar");
 	if (toolbar) {
+		toolbar.collapsed = true;
 		let ABChecker = new directoryChecker("Contacts");
-		toolbar.collapsed = !ABChecker.checkAvailability();
+		ABChecker.checkAvailability(function() { toolbar.collapsed = false; });
 	}
 }
 

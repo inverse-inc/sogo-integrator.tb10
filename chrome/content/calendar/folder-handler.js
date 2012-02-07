@@ -94,6 +94,21 @@ CalendarHandler.prototype = {
         }
         if (color)
             directory.setProperty("color", color);
+        directory.setProperty("aclManagerClass", "@inverse.ca/calendar/caldav-acl-manager;1");
+        let jsCalendar = directory.wrappedJSObject;
+        jsCalendar.mACLEntry = null;
+
+        let opListener = {
+            onGetResult: function(calendar, status, itemType, detail, count, items) {
+                ASSERT(false, "unexpected!");
+            },
+            onOperationComplete: function(opCalendar, opStatus, opType, opId, opDetail) {
+                jsCalendar.mACLEntry = opDetail;
+                jsCalendar.fillACLProperties();
+            }
+        };
+
+        jsCalendar.aclManager.getCalendarEntry(jsCalendar, opListener);
     },
     addDirectories: function addDirectories(newDirs) {
         let ioSvc = Components.classes["@mozilla.org/network/io-service;1"]
