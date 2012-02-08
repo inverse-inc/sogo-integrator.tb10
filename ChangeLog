@@ -1,3 +1,19 @@
+2012-02-08  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/general/subscription-dialog.js: ensure that
+	"response" is not null before processing it, otherwise mark result
+	as void.
+	(onSearchInputBlur, onSearchInputFocus): removed obsolete event
+	handler, since the "search" text fields now handle this properly
+	for us.
+
+	* chrome/content/calendar/roles-dialog.js (onDAVQueryComplete),
+	chrome/content/addressbook/roles-dialog.js (onDAVQueryComplete):
+	ensure that "response" is not null before invoking "indexOf" on it.
+
+	* chrome/content/addressbook/newcard-overlay.js
+	(SIOnNewCardOverlayLoad): adapted to new ab API.
+
 2012-02-07  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/messenger/startup-overlay.js,

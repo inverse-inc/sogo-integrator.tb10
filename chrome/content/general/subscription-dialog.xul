@@ -27,7 +27,7 @@
   <vbox id="subscriptionWidgets" flex="1">
     <hbox id="searchBox">
       <textbox id="peopleSearchInput" type="search" flex="1"
-               emptytext="&subscription.searchcriteria.label;"/>
+               placeholder="&subscription.searchcriteria.label;"/>
       <vbox id="throbber-box" busy="false" pack="center">
          <image src="chrome://global/skin/media/throbber.png"/>
       </vbox>

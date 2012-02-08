@@ -37,7 +37,7 @@ function onLoad() {
 				var cbId = "roleObject" + cbRole;
 				var cb = document.getElementById(cbId);
 				cb.collapsed = true;
-		}
+    }
 
 		var titleLabel = document.getElementById("titleLabel");
 		titleLabel.setAttribute("transparent", "true");
@@ -59,9 +59,9 @@ function onLoad() {
 function onDAVQueryComplete(status, response, headers, data) {
 	if (status > 199 && status < 300) {
 		if (data == "load-query") {
-			var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
-				.createInstance(Components.interfaces.nsIDOMParser);
-			if (response.indexOf("<?xml") == 0) {
+			if (response && response.indexOf("<?xml") == 0) {
+				var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+															 .createInstance(Components.interfaces.nsIDOMParser);
 				var xmlResult = parser.parseFromString(response, "text/xml");
 				var result = xmlResult.documentElement;
 				for (var i = 0; i < result.childNodes.length; i++) {

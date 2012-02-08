@@ -21,10 +21,9 @@ function SIOnNewCardOverlayLoad() {
 		let handler = new AddressbookHandler();
 		let existing = handler.getExistingDirectories();
 		let personalURL = sogoBaseURL() + "Contacts/personal/";
-		let directory = existing[personalURL]
-			.QueryInterface(Components.interfaces.nsIRDFResource);
-		gEditCard.selectedAB = directory.Value;
-		document.getElementById("abPopup").value = directory.Value;
+		let directory = existing[personalURL];
+		gEditCard.selectedAB = directory.URI;
+		document.getElementById("abPopup").value = directory.URI;
 	}
 }
 

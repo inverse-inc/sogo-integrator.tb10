@@ -33,9 +33,6 @@ function onSubscriptionDialog() {
     tree.addEventListener("dblclick", onAddButtonClick, false);
 
     let searchInput = document.getElementById("peopleSearchInput");
-    searchInput.inputField.addEventListener("focus", onSearchInputFocus, false);
-    searchInput.inputField.addEventListener("blur", onSearchInputBlur, false);
-    searchInput.addEventListener("click", onSearchInputFocus, false);
     searchInput.addEventListener("input", onSearchInputInput, false);
     searchInput.addEventListener("keypress", onSearchInputKeyPress, false);
 
@@ -78,24 +75,6 @@ function onAddButtonClick(event) {
     }
 }
 
-function onSearchInputBlur(event) {
-    let searchInput = document.getElementById("peopleSearchInput");
-    if (!("" + this.value).length)
-        searchInput.showingSearchCriteria = true;
-    if (searchInput.showingSearchCriteria)
-        searchInput.setSearchCriteriaText();
-}
-
-function onSearchInputFocus(event) {
-    let searchInput = document.getElementById("peopleSearchInput");
-
-    if (searchInput.showingSearchCriteria) {
-        searchInput.value = "";
-        searchInput.showingSearchCriteria = false;
-    }
-    searchInput.select();
-}
-
 function onSearchInputInput(event) {
     // 	dump("this.showingSearchCriteria: " + this.showingSearchCriteria + "\n");
     if (!this.clean) {
@@ -111,8 +90,9 @@ function onSearchInputInput(event) {
         gSearchTimer = null;
     }
 
-    if (!(this.showingSearchCriteria || ("" + this.value) == ""))
+    if (this.value) {
         gSearchTimer = setTimeout(onStartSearch, 800);
+    }
 }
 
 function onSearchInputKeyPress(event) {
@@ -146,33 +126,37 @@ function onClearSearch() {
 
 let userReportTarget = {
  onDAVQueryComplete: function(status, result, headers) {
-        let parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
-                               .createInstance(Components.interfaces.nsIDOMParser);
-        let xmlResult = null;
-        if (result.indexOf("<?xml") == 0) {
-            xmlResult = parser.parseFromString(result, "text/xml");
-        }
-
-        let treeView;
-        if (resourceType == "users")
-            treeView = new UsersTreeView(xmlResult);
-        else
-            treeView = new SubscriptionTreeView(xmlResult, resourceType);
-        let tree = document.getElementById("subscriptionTree");
-        tree.view = treeView;
-        tree.treeView = treeView;
-        tree.setAttribute("searching", "done");
-
         let searchInput = document.getElementById("peopleSearchInput");
         searchInput.clean = false;
-        if (treeView.rowCount == 0) {
-            searchInput.setAttribute("searching", "notfound");
-        } else {
-            searchInput.removeAttribute("searching");
-        }
-
         let throbber = document.getElementById("throbber-box");
         throbber.setAttribute("busy", "false");
+        if (result) {
+            let parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+                                   .createInstance(Components.interfaces.nsIDOMParser);
+            let xmlResult = null;
+            if (result.indexOf("<?xml") == 0) {
+                xmlResult = parser.parseFromString(result, "text/xml");
+            }
+
+            let treeView;
+            if (resourceType == "users")
+                treeView = new UsersTreeView(xmlResult);
+            else
+                treeView = new SubscriptionTreeView(xmlResult, resourceType);
+            let tree = document.getElementById("subscriptionTree");
+            tree.view = treeView;
+            tree.treeView = treeView;
+            tree.setAttribute("searching", "done");
+
+            if (treeView.rowCount == 0) {
+                searchInput.setAttribute("searching", "notfound");
+            } else {
+                searchInput.removeAttribute("searching");
+            }
+        }
+        else {
+            searchInput.setAttribute("searching", "notfound");
+        }
     }
 };
 
