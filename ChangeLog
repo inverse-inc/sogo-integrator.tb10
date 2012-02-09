@@ -1,5 +1,23 @@
 2012-02-09  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* chrome/content/general/subscription-utils.js (escapedUsername):
+	substitutes "+" with "_SP_" as in SOGo 2.
+
+	* chrome/content/calendar/folder-handler.js (addDirectories): the
+	calendar properties must be set BEFORE the calendar registration,
+	due to improvements in Lightning 1.0b3 (vanilla) with regards to
+	instantiation of cached calendars.
+	(_setDirectoryProperties): thanks to the change above, it is no
+	longer required to force a refetch of the calendar ACL entry after
+	modifying its provider class. The mechanism did not work anyway
+	due to other problems.
+
+	* chrome/content/calendar/calendar-overlay.js
+	(managerCalendarACL): force a refresh of the calendar, in order to
+	force a redraw of its associated display blocks and a renewal of
+	their associated events. This futher forces the event acl entries
+	to be refreshed when edited or displayed.
+
 	* chrome/content/calendar/folder-handler.js
 	(CalendarHandler._setDirectoryProperties): restored setting
 	calendars as cached.

@@ -47,6 +47,7 @@ function manageCalendarACL() {
                     rolesDialogURL: "chrome://sogo-integrator/content/calendar/roles-dialog.xul"});
     } else {
         entry.refresh();
+        calendar.refresh();
     }
 }
 

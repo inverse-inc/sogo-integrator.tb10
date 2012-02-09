@@ -24,11 +24,12 @@ function escapedUserName(original) {
 												 "\\*": "_S_",
 												 ":": "_C_",
 												 ",": "_CO_",
-												 " ": "_SP_"};
+												 " ": "_SP_",
+												 "\\+": "_P_"};
 	
 	var escapedString = original;
 	var re;
-	for (var conversionChar in conversionTable) {
+	for (let conversionChar in conversionTable) {
 		re = new RegExp(conversionChar, 'g');
 		escapedString = escapedString.replace(re, conversionTable[conversionChar]);
 	}

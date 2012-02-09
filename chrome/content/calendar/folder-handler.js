@@ -97,26 +97,6 @@ CalendarHandler.prototype = {
             directory.setProperty("color", color);
         }
         directory.setProperty("aclManagerClass", "@inverse.ca/calendar/caldav-acl-manager;1");
-
-        let jsCalendar = directory.wrappedJSObject;
-        if (jsCalendar.mUncachedCalendar) {
-            jsCalendar = jsCalendar.mUncachedCalendar;
-            jsCalendar = jsCalendar.wrappedJSObject;
-        }
-
-        jsCalendar.mACLEntry = null;
-
-        let opListener = {
-            onGetResult: function(calendar, status, itemType, detail, count, items) {
-                ASSERT(false, "unexpected!");
-            },
-            onOperationComplete: function(opCalendar, opStatus, opType, opId, opDetail) {
-                jsCalendar.mACLEntry = opDetail;
-                jsCalendar.fillACLProperties();
-            }
-        };
-
-        jsCalendar.aclManager.getCalendarEntry(jsCalendar, opListener);
     },
     addDirectories: function addDirectories(newDirs) {
         let ioSvc = Components.classes["@mozilla.org/network/io-service;1"]
@@ -126,8 +106,8 @@ CalendarHandler.prototype = {
         for (let i = 0; i < newDirs.length; i++) {
             let newURI = ioSvc.newURI(newDirs[i]['url'], null, null);
             let newCalendar = this.mgr.createCalendar("caldav", newURI);
-            this.mgr.registerCalendar(newCalendar, true);
             this._setDirectoryProperties(newCalendar, newDirs[i], true);
+            this.mgr.registerCalendar(newCalendar, true);
         }
     },
     renameDirectories: function renameDirectories(dirs) {
