@@ -1,3 +1,9 @@
+2012-02-09  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/headerview-overlay.js: new overlay that
+	intercepts card addition and edition (not yet) from the star
+	button in mail header display.
+
 2012-02-08  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/general/subscription-dialog.js: ensure that

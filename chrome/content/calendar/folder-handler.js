@@ -95,7 +95,13 @@ CalendarHandler.prototype = {
         if (color)
             directory.setProperty("color", color);
         directory.setProperty("aclManagerClass", "@inverse.ca/calendar/caldav-acl-manager;1");
+
         let jsCalendar = directory.wrappedJSObject;
+        if (jsCalendar.mUncachedCalendar) {
+            jsCalendar = jsCalendar.mUncachedCalendar;
+            jsCalendar = jsCalendar.wrappedJSObject;
+        }
+
         jsCalendar.mACLEntry = null;
 
         let opListener = {
