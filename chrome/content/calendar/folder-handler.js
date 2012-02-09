@@ -91,9 +91,11 @@ CalendarHandler.prototype = {
                 directory.setProperty("showInvitations", true);
                 directory.setProperty("suppressAlarms", false);
             }
+            directory.setProperty("cache.enabled", true);
         }
-        if (color)
+        if (color) {
             directory.setProperty("color", color);
+        }
         directory.setProperty("aclManagerClass", "@inverse.ca/calendar/caldav-acl-manager;1");
 
         let jsCalendar = directory.wrappedJSObject;
