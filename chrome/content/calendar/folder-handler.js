@@ -38,26 +38,36 @@ CalendarHandler.prototype = {
         return existing;
     },
     removeHomeCalendar: function removeHomeCalendar() {
-        let cals = this.mgr.getCalendars({});
-
-        for each (let cal in cals) {
-            if (cal.type == "storage" && cal.uri.spec == "moz-profile-calendar://") {
-                let dbService = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService);
-                let mDB = dbService.openSpecialDatabase("profile");
-                let stmt = mDB.createStatement("select (select count(*) from cal_events where cal_id = 0) + (select count(*) from cal_todos where cal_id = 0)");
-                let count = 0;
-
-                if (stmt.executeStep()) {
-                    count += stmt.getInt32(0);
-                }
-                stmt.reset();
-
-                if (count == 0) {
-                    this.mgr.unregisterCalendar(cal);
-                    this.mgr.deleteCalendar(cal);
-                }
-            }
+        let mgr = this.mgr;
+        let cals = mgr.getCalendars({});
+        if (cals.length != 1) {
+            return;
         }
+
+        let aCal = cals[0];
+        if (aCal.uri.spec != "moz-storage-calendar://") {
+            return;
+        }
+
+        let this_ = this;
+        let listener = {
+            itemCount: 0,
+            onOperationComplete: function(aCalendar, aStatus, aOperationType, aId, aDetail) {
+                dump("local calendar: " + aCalendar.uri.spec + "\n");
+                dump("this.itemCount: " + this.itemCount + "\n");
+                if (!this.itemCount) {
+                    dump("removing\n");
+                    mgr.unregisterCalendar(aCalendar);
+                    mgr.deleteCalendar(aCalendar);
+                }
+            },
+            onGetResult: function(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
+                this.itemCount += aCount;
+            }
+        };
+
+        aCal.getItems(Components.interfaces.calICalendar.ITEM_FILTER_ALL_ITEMS,
+                      0, null, null, listener);
     },
     removeDoubles: function removeDoubles() {
         this.removeDirectories(this.doubles);

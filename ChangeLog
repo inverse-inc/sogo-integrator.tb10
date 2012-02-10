@@ -1,3 +1,9 @@
+2012-02-10  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/calendar/folder-handler.js
+	(CalendarHandler.prototype.removeHomeCalendar): updated code to
+	handle new-style (guid) ids.
+
 2012-02-09  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/general/subscription-utils.js (escapedUsername):
