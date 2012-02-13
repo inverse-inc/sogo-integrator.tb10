@@ -1,3 +1,10 @@
+2012-02-13  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/calendar/calendar-overlay.js: we now directly
+	override "promptDeleteCalendar", as it may be called from the
+	calendar-list-tree widget, notwithstanding the xul command
+	overlay.
+
 2012-02-10  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/calendar/folder-handler.js

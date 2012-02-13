@@ -19,8 +19,8 @@
     <menuitem id="list-calendars-context-delete"
       deletelabel="&calendar.context.sogo-delete.label;"
       unsubscribelabel="&calendar.context.sogo-unsubscribe.label;"
-      oncommand="openCalendarUnsubscriptionDialog();"
       observes="calendar_unsubscribe_calendar_command"/>
+    <!-- oncommand="openCalendarUnsubscriptionDialog();" -->
     <menuitem id="list-calendars-context-sogo-showonly"
       label="&calendar.context.showonly.label;"
       observes="calendar_sogo_showonly_command"/>

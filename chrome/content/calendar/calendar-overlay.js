@@ -68,9 +68,10 @@ function openDeletePersonalDirectoryForbiddenDialog() {
     alert(bundle.getString("deletePersonalCalendarError"));
 }
 
-function openCalendarUnsubscriptionDialog() {
-    let calendar = getSelectedCalendar();
+/* function openCalendarUnsubscriptionDialog() {
+    let calendar = getSelectedCalendar(); */
 
+function promptDeleteCalendar(calendar) {
     let url = calendar.uri.spec;
     let baseURL = sogoBaseURL();
     if (url.indexOf(baseURL) == 0) {
