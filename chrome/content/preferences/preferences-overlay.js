@@ -55,7 +55,7 @@ function SIPrefsOnLoad() {
     };
     for each (let branchName in [ "events", "todos" ]) {
         let pref = document.getElementById("calendar." + branchName + ".default-classification");
-        pref.addEventListener("change", classChangeListener);
+        pref.addEventListener("change", classChangeListener, false);
     }
 }
 
