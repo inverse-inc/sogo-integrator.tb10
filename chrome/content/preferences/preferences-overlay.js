@@ -14,11 +14,13 @@ function jsInclude(files, target) {
 }
 
 jsInclude(["chrome://inverse-library/content/sogoWebDAV.js",
-           "chrome://sogo-integrator/content/addressbook/categories.js"]);
-
+           "chrome://sogo-integrator/content/addressbook/categories.js",
+           "chrome://sogo-integrator/content/calendar/default-classifications.js"]);
 let gSICategoriesChanged = false;
+let gSIDefaultClassificationsChanged = false;
 
 function SIPrefsOnLoad() {
+    /* contacts categories */
     let SIgSOGoConnectorPane_addCategory_old = gSOGoConnectorPane.contactCategoriesPane._addCategory;
     let SIgSOGoConnectorPane_editCategory_old = gSOGoConnectorPane.contactCategoriesPane._editCategory;
     let SIgSOGoConnectorPaneonDeleteCategory_old = gSOGoConnectorPane.contactCategoriesPane.onDeleteCategory;
@@ -46,11 +48,23 @@ function SIPrefsOnLoad() {
     gSOGoConnectorPane.contactCategoriesPane._addCategory = SIgSOGoConnectorPane_addCategory;
     gSOGoConnectorPane.contactCategoriesPane._editCategory = SIgSOGoConnectorPane_editCategory;
     gSOGoConnectorPane.contactCategoriesPane.onDeleteCategory = SIgSOGoConnectorPaneonDeleteCategory;
+
+    /* calendar classifications */
+    let classChangeListener = function(event) {
+        gSIDefaultClassificationsChanged = true;
+    };
+    for each (let branchName in [ "events", "todos" ]) {
+        let pref = document.getElementById("calendar." + branchName + ".default-classification");
+        pref.addEventListener("change", classChangeListener);
+    }
 }
 
 function SIPrefsOnUnload() {
     if (gSICategoriesChanged) {
         SIContactCategories.synchronizeToServer();
+    }
+    if (gSIDefaultClassificationsChanged) {
+        SICalendarDefaultClassifications.synchronizeToServer();
     }
 }
 

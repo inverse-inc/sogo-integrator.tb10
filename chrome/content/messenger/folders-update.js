@@ -18,7 +18,8 @@ jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
            "chrome://inverse-library/content/sogoWebDAV.js",
            "chrome://sogo-integrator/content/addressbook/folder-handler.js",
            "chrome://sogo-integrator/content/addressbook/categories.js",
-           "chrome://sogo-integrator/content/calendar/folder-handler.js"]);
+           "chrome://sogo-integrator/content/calendar/folder-handler.js",
+           "chrome://sogo-integrator/content/calendar/default-classifications.js"]);
 
 function directoryChecker(type, handler) {
     this.type = type;
@@ -299,6 +300,7 @@ function checkFolders() {
                                                       hideLightningWidgets("true");
                                                   }
                                                   else {
+                                                      SICalendarDefaultClassifications.synchronizeFromServer();
                                                       handler.removeHomeCalendar();
                                                       CalendarChecker.start();
                                                       // hideLightningWidgets("false");

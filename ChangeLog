@@ -1,3 +1,15 @@
+2012-02-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/preferences/preferences-overlay.js: added code to
+	synchronise classification preferences to server when modified.
+
+	* chrome/content/messenger/folders-update.js (checkFolders):
+	synchronise the classification preferences at launch time.
+
+	* chrome/content/calendar/default-classifications.js: new module
+	that handles synchronisation of the default classification
+	preferences.
+
 2012-02-13  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/calendar/calendar-overlay.js: we now directly
