@@ -1,3 +1,9 @@
+2012-02-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* chrome/content/addressbook/folder-handler.js
+	(AddressbookHandler.prototype._moveAddressBook): fixed to properly
+	handle the transfer of lists.
+
 2012-02-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* chrome/content/preferences/preferences-overlay.js: added code to
