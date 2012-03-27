@@ -4,4 +4,4 @@
 <!ENTITY calendar.context.showonly.label "Nur diesen Kalender zeigen">
 <!ENTITY calendar.context.showall.label "Alle Kalender zeigen">
 <!ENTITY calendar.context.sogo-delete.label "Kalender löschen">
-<!ENTITY calendar.context.sogo-unsubscribe.label "Kalender kündigen">
+<!ENTITY calendar.context.sogo-unsubscribe.label "Abonnement für Kalender kündigen">
