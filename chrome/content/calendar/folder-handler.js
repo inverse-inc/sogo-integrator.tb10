@@ -76,12 +76,31 @@ CalendarHandler.prototype = {
                                                               properties,
                                                               isNew) {
         let displayName = properties['displayName'];
+        let color = null;
+        let suppressAlarms = false;
+        let suppressAlarmsSetFromDAV = false;
         let props = properties.additional;
-        let color;
-        if (props && props[0])
-            color = props[0].substr(0, 7).toUpperCase(); /* calendar-color */
-        else
-            color = null;
+        if (props) {
+            if (props[0]) { /* calendar-color */
+                color = props[0].substr(0, 7).toUpperCase();
+            }
+            if (props[1]) { /* calendar-show-alarms */
+                suppressAlarmsSetFromDAV = true;
+                suppressAlarms = (props[1] == "false" || props[1] == "0");
+            }
+            let sogoProps = ["notify-on-personal-modifications",
+                             "notify-on-external-modifications",
+                             "notify-user-on-personal-modifications",
+                             "notified-user-on-personal-modifications"];
+            let counter = 2;
+            for each (let sogoProp in sogoProps) {
+                if (props[counter]) {
+                    let propName = "calendar.sogo." + sogoProp;
+                    directory.setProperty(propName, props[counter]);
+                }
+                counter++;
+            }
+        }
 
         directory.name = displayName;
         if (isNew) {
@@ -94,17 +113,24 @@ CalendarHandler.prototype = {
             if (directory.uri.spec.indexOf('_') > -1) {
                 directory.setProperty("showInTodayPane", false);
                 directory.setProperty("showInvitations", false);
-                directory.setProperty("suppressAlarms", true);
+                if (!suppressAlarmsSetFromDAV) {
+                    directory.setProperty("suppressAlarms", true);
+                }
             }
             else {
                 directory.setProperty("showInTodayPane", true);
                 directory.setProperty("showInvitations", true);
-                directory.setProperty("suppressAlarms", false);
+                if (!suppressAlarmsSetFromDAV) {
+                    directory.setProperty("suppressAlarms", false);
+                }
             }
             directory.setProperty("cache.enabled", true);
         }
         if (color) {
             directory.setProperty("color", color);
+        }
+        if (suppressAlarmsSetFromDAV) {
+            directory.setProperty("suppressAlarms", suppressAlarms);
         }
         directory.setProperty("aclManagerClass", "@inverse.ca/calendar/caldav-acl-manager;1");
     },
@@ -136,6 +162,12 @@ CalendarHandler.prototype = {
         return sogoBaseURL() + "Calendar";
     },
     additionalDAVProperties: function additionalDAVProperties() {
-        return ["http://apple.com/ns/ical/ calendar-color"];
+        return ["http://apple.com/ns/ical/ calendar-color",
+                "urn:inverse:params:xml:ns:inverse-dav calendar-show-alarms",
+                "urn:inverse:params:xml:ns:inverse-dav notify-on-personal-modifications",
+                "urn:inverse:params:xml:ns:inverse-dav notify-on-external-modifications",
+                "urn:inverse:params:xml:ns:inverse-dav notify-user-on-personal-modifications",
+                "urn:inverse:params:xml:ns:inverse-dav notified-user-on-personal-modifications"
+               ];
     }
 };

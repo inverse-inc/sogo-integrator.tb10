@@ -15,8 +15,7 @@ function jsInclude(files, target) {
 
 jsInclude(["chrome://sogo-integrator/content/sogo-config.js",
            "chrome://sogo-connector/content/general/preference.service.addressbook.groupdav.js",
-           "chrome://sogo-connector/content/general/vcards.utils.js",
-           "chrome://sogo-connector/content/common/common-dav.js"]);
+           "chrome://sogo-connector/content/general/vcards.utils.js"]);
 
 function AddressbookHandler() {
     this.doubles = {};
