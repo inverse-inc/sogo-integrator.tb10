@@ -6,12 +6,12 @@
   <Description about="rdf:#$Iwquq2"
     em:id="{3550f703-e582-4d05-9a08-453d09bdfdc6}"
     em:minVersion="10.0"
-    em:maxVersion="10.1.*" />
+    em:maxVersion="10.*" />
   <!-- em:optionsURL="chrome://sogo-integrator/content/general/preferences.xul" -->
   <Description about="urn:mozilla:install-manifest"
     em:name="Inverse SOGo Integrator"
     em:id="sogo-integrator@inverse.ca"
-    em:version="10.0.3"
+    em:version="10.0.4"
     em:description="A SOGo integration plugin for Thunderbird and Lightning"
     em:iconURL="chrome://sogo-integrator/skin/sogo.png"
     em:creator="Inverse &lt;support@inverse.ca&gt;"

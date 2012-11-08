@@ -491,7 +491,7 @@ SubscriptionTreeView.prototype = {
 
         // 		dump("getParentIndex: " + rows[index] + "\n");
         return (rows.length > rowIndex) ? rows[rowIndex] : null;
-A    },
+    },
  getProgressMode: function(rowIndex, col) {
         dump("getPRogressMode\n");
     },
